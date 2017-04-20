@@ -26,7 +26,7 @@ public class LogoAcitivity
         setContentView(R.layout.activity_logo_acitivity);
         getSupportActionBar().hide();
         //最终钉板
-        
+
 
 
         initView();

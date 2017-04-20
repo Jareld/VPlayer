@@ -281,6 +281,8 @@ public class PicAcitivity
 
                 ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_single_1)).setText(
                         mPicsName.get(mPicsName.size() - 1));
+
+                ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_single_1)).setSelected(true);
                 final int final_double_i = i + 1;
                 Glide.with(mContext)
                      .load(mPics.get(mPics.size() - 1))
@@ -450,6 +452,8 @@ public class PicAcitivity
                         mPicsName.get(mPicsName.size() - 1));
                 ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setText(
                         mPicsName.get(mPicsName.size() - 1));
+                ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_1)).setSelected(true);
+                ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setSelected(true);
                 final int final_double_i = i + 1;
                 iv_double_2.setBackgroundColor(Color.TRANSPARENT);
                 iv_double_4.setBackgroundColor(Color.TRANSPARENT);
@@ -550,6 +554,10 @@ public class PicAcitivity
                     mPicsName.size() - 1));
             ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setText(mPicsName.get(
                     mPicsName.size() - 1));
+
+            ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_1)).setSelected(true);
+            ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setSelected(true);
+
             final int final_double_i = 0;
             iv_double_2.setBackgroundColor(Color.TRANSPARENT);
             iv_double_4.setBackgroundColor(Color.TRANSPARENT);

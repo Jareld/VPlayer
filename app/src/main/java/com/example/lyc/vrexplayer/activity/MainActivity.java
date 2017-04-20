@@ -849,6 +849,9 @@ public class MainActivity
                         mVideosName.get(mVideosName.size() - 1));
                 ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setText(
                         mVideosName.get(mVideosName.size() - 1));
+                ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_1)).setSelected(true);
+                ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setSelected(true);
+
                 final int final_double_i = i + 1;
                 iv_double_2.setBackgroundColor(Color.TRANSPARENT);
                 iv_double_4.setBackgroundColor(Color.TRANSPARENT);
@@ -949,6 +952,10 @@ public class MainActivity
                     mVideosName.get(mVideosName.size() - 1));
             ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setText(
                     mVideosName.get(mVideosName.size() - 1));
+
+            ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_1)).setSelected(true);
+            ((TextView) inflate1.findViewById(R.id.item_tx_scroll_view_double_3)).setSelected(true);
+
             final int final_double_i = 0 ;
             iv_double_2.setBackgroundColor(Color.TRANSPARENT);
             iv_double_4.setBackgroundColor(Color.TRANSPARENT);
