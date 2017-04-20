@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="1"
+                  android:orientation="vertical">
+
+        <Button android:id="@+id/search_device" android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="搜索设备"
+        />
+        <Button android:id="@+id/stop_search_device" android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="停止搜索设备"
+                android:visibility="gone"
+        />
+        <Button
+            android:id="@+id/stop_connect" android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="断开连接"
+        />
+        <Button android:id="@+id/send_file" android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="发送文件"
+        />
+        <TextView android:id="@+id/tv_trans_file_client" android:layout_width="wrap_content"
+                  android:layout_height="0dp"
+                  android:layout_weight="1"
+                  android:text="传送文件的状态："></TextView>
+        <!--这里是给 搜索 停止搜索  断开连接用的-->
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView android:layout_width="0dp"
+                                            android:id="@+id/devices"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"></android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>

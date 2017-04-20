@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="1"
+                  android:orientation="vertical">
+        <Button android:id="@+id/search_device_server" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:text="等待客户端的申请连接"
+        />
+        <Button
+            android:id="@+id/stop_connect_server" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="断开连接"
+        />
+
+        <Button android:id="@+id/recevie_data" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="服务器状态："
+        />
+        <TextView android:id="@+id/tv_trans_file_server" android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="传输文件的状态："
+        />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView android:id="@+id/devices_server"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"></android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>

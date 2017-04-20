@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/activity_wifi_p2p_rec"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/test_bg_1"
+    android:gravity="center_vertical"
+    android:keepScreenOn="true"
+    android:orientation="horizontal"
+    tools:context="com.example.lyc.vrexplayer.activity.WifiP2pRecActivity">
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:layout_marginLeft="50dp"
+                  android:layout_marginTop="30dp"
+                  android:orientation="vertical">
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+            <Button android:id="@+id/wating_device_connect_btn" android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@mipmap/test_button_1"
+                    android:text="状态："/>
+            <TextView android:id="@+id/wating_device_connect" android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="创建接收端中......"
+                      android:textColor="#ff0000"
+                      android:textSize="15sp"
+            />
+        </LinearLayout>
+
+        <Button android:id="@+id/reset_status_btn" android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="10dp"
+                android:background="@mipmap/test_button_1"
+                android:text="重置"/>
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center_vertical"
+                      android:orientation="horizontal">
+            <Button android:id="@+id/file_rec__btn" android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@mipmap/test_button_1"
+                    android:text="文件："/>
+            <TextView android:id="@+id/file_rec" android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="接受文件？"
+                      android:textColor="#ff0000"
+                      android:textSize="15sp"
+            />
+            <com.example.lyc.vrexplayer.view.FlikerProgressBar android:id="@+id/rec_file_progress"
+                                                               android:layout_width="match_parent"
+                                                               android:layout_marginLeft="20dp"
+                                                               android:layout_marginRight="40dp"
+                                                               android:layout_height="24dp"
+                                                               app:borderWidth="2dp"
+                                                               app:textSize="12sp"
+                                                               app:radius="12dp"
+                                                               android:layout_gravity="center_vertical"
+            />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

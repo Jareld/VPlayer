@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="horizontal">
+
+        <ImageView android:id="@+id/iv_left" android:layout_width="0dp"
+                   android:layout_height="match_parent"
+                   android:scaleType="fitXY"
+                   android:layout_weight="1"
+        />
+        <ImageView android:id="@+id/iv_right" android:layout_width="0dp"
+                   android:layout_height="match_parent"
+                   android:scaleType="fitXY"
+                   android:layout_weight="1"
+        />
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:background="#00ffffff"
+                  android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:id="@+id/pic_video_ll_fenge"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"                  android:background="#00ffffff"
+
+            android:orientation="vertical">
+
+            <!--<TextView-->
+
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="#4B8BF5"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:paddingTop="60dp"-->
+            <!--android:text="VrexMedia"-->
+            <!--android:textSize="25sp"/>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+                <Button android:layout_width="50dp" android:layout_height="50dp"
+                 android:background="@mipmap/test_button_1"
+                        android:id="@+id/wifi_p2p_left"
+                        android:textSize="15sp"
+                        android:selectAllOnFocus="false"
+                        android:layout_marginRight="20dp"
+                        android:layout_gravity="end"
+                        android:text="wifi"
+                />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="Samson VR Player"
+                          android:textSize="17sp"
+                          android:textColor="#80ffffff"
+                />
+                <Button
+                    android:background="@mipmap/test_button_1"
+                    android:id="@+id/new_pic_video_state_pic"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="picture"
+                    android:textSize="15sp"/>
+
+                <Button
+                    android:id="@+id/new_pic_video_state_video"
+                    android:background="@mipmap/test_button_1"
+
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="  video  "
+                    android:textSize="15sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/pic_video_ll_fenge2"
+            android:layout_width="0dp"                  android:background="#00ffffff"
+
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="#4B8BF5"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:paddingTop="60dp"-->
+            <!--android:text="VrexMedia"-->
+            <!--android:textSize="25sp"/>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button android:layout_width="50dp" android:layout_height="50dp"
+                        android:background="@mipmap/test_button_1"
+                        android:selectAllOnFocus="false"
+                        android:id="@+id/wifi_p2p_right"
+                        android:layout_gravity="end"
+                        android:layout_marginRight="20dp"
+                        android:text="wifi"
+                        android:textSize="15sp"  />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="Samson VR Player"
+                        android:textSize="17sp"
+                          android:textColor="#80ffffff"
+                />
+                <Button
+                    android:id="@+id/new_pic_video_state_pic2"
+                    android:background="@mipmap/test_button_1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="picture"
+                    android:textSize="15sp"/>
+
+                <Button
+                    android:id="@+id/new_pic_video_state_video2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@mipmap/test_button_1"
+                    android:layout_gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="  video  "
+                    android:textSize="15sp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>

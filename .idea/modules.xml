@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/VrexPlayer.iml" filepath="$PROJECT_DIR$/VrexPlayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wifip2plib/wifip2plib.iml" filepath="$PROJECT_DIR$/wifip2plib/wifip2plib.iml" />
+    </modules>
+  </component>
+</project>

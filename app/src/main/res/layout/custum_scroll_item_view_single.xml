@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                  android:layout_weight="1" android:orientation="vertical">
+        <ImageView android:id="@+id/item_scroll_view_single_1"
+                   style="@style/item_scrollview_ll_imageview"/>
+        <include android:id="@+id/item_tx_scroll_view_single_1"
+                 layout="@layout/item_view_textview_single"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                  android:layout_weight="1" android:orientation="vertical">
+
+        <ImageView android:id="@+id/item_scroll_view_single_2"
+                   style="@style/item_scrollview_ll_imageview"
+        />
+
+        <include android:id="@+id/item_tx_scroll_view_single_2"
+                 layout="@layout/item_view_textview_single"/>
+
+    </LinearLayout>
+</LinearLayout>
