@@ -458,6 +458,9 @@ public class WifiP2pRecActivity
 
         }
 
+
+
+        //随便添加
         Log.d(TAG, "initData: 最终的路径" + mAbsolutePath);
 
     }
