@@ -25,6 +25,10 @@ public class LogoAcitivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo_acitivity);
         getSupportActionBar().hide();
+        //最终钉板
+        
+
+
         initView();
         initData();
         initEvent();
