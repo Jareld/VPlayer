@@ -39,7 +39,6 @@ public class PicAcitivity
         extends AppCompatActivity
         implements ObservableScrollView.ScrollViewKeydownListener
 {
-
     public static final  int    ORIENTATION_PROTRAIT  = 1;
     public static final  int    ORIENTATION_LANDSCAPE = 2;
     private static final String TAG                   = "PicAcitivity";

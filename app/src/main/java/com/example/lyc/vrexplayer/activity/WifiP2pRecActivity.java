@@ -70,6 +70,7 @@ public class WifiP2pRecActivity
     private        FlikerProgressBar mRec_progress;
     private static final int     RESTART_REC          = 1;
     private static final int     NOT_FINISHED_RESTART = 2;
+    private static final int     MISS_PROGRESS        = 3;
     private              Handler mHandler             = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -92,12 +93,16 @@ public class WifiP2pRecActivity
                     mServerTask = new FileServerAsyncTask();
                     mServerTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     break;
+                case MISS_PROGRESS:
+                    mRec_progress.setVisibility(View.GONE);
+                    break;
             }
 
             super.handleMessage(msg);
         }
     };
     private boolean mIsFromServer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -229,10 +234,12 @@ public class WifiP2pRecActivity
                                                      if (mRec_progress.getVisibility() == View.GONE) {
                                                          mRec_progress.setVisibility(View.VISIBLE);
                                                      }
-                                                     float        progress =  (userEvent.getProgress() * 100 / userEvent.getFileLengthMB()) ;
-                                                     Log.d(TAG, "run: "+progress);
-                                                     BigDecimal b        =   new BigDecimal(progress);
-                                                     progress       =  b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+                                                     float progress = (userEvent.getProgress() * 100 / userEvent.getFileLengthMB());
+                                                     Log.d(TAG, "run: " + progress);
+                                                     BigDecimal b = new BigDecimal(progress);
+                                                     progress = b.setScale(1,
+                                                                           BigDecimal.ROUND_HALF_UP)
+                                                                 .floatValue();
                                                      mRec_progress.setProgress(progress);
 
                                                  }
@@ -241,8 +248,11 @@ public class WifiP2pRecActivity
 
 
                                              break;
-                                         case  "connect_fail":
-                                             Toast.makeText(getApplicationContext() , "启动文件传输失败 ，请重新发送文件" , Toast.LENGTH_SHORT).show();
+                                         case "connect_fail":
+                                             Toast.makeText(getApplicationContext(),
+                                                            "启动文件传输失败 ，请重新发送文件",
+                                                            Toast.LENGTH_SHORT)
+                                                  .show();
                                              break;
 
                                      }
@@ -400,7 +410,7 @@ public class WifiP2pRecActivity
         mTv_waiting_for_server = (TextView) findViewById(R.id.wating_device_connect);
         mTv_rec_file = (TextView) findViewById(R.id.file_rec);
         mRec_progress = (FlikerProgressBar) findViewById(R.id.rec_file_progress);
-        mRec_progress.setVisibility(View.GONE);
+        mHandler.sendEmptyMessageDelayed(MISS_PROGRESS , 50);
     }
 
     private void initData() {
@@ -457,7 +467,6 @@ public class WifiP2pRecActivity
 
 
         }
-
 
 
         //随便添加

@@ -115,6 +115,7 @@ public class FlikerProgressBar
 
     public FlikerProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        Log.d(TAG, "FlikerProgressBar:走这个生命周期");
         initAttrs(attrs);
     }
 
@@ -150,7 +151,7 @@ public class FlikerProgressBar
                             borderWidth,
                             getMeasuredWidth() - borderWidth,
                             getMeasuredHeight() - borderWidth);
-
+        Log.d(TAG, "init: onMeasure"+getMeasuredWidth() +"::" + getMeasuredHeight());
         if (isStop) {
             progressColor = stopColor;
         } else {
@@ -196,7 +197,9 @@ public class FlikerProgressBar
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.d(TAG, "onMeasure: ");
         int widthSpecSize  = MeasureSpec.getSize(widthMeasureSpec);
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
