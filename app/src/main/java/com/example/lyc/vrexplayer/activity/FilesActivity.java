@@ -514,15 +514,20 @@ public class FilesActivity
                 Log.d(TAG, "addVideoPath: 是文件");
                 addVideoPath(file.listFiles());
             } else {
-                if (MediaFile.isVideoFileType(file.getAbsolutePath())) {
+                String name = file.getName();
+                int    i1   = name.lastIndexOf(".");
+                String substring1 = name.substring(i1);
+                Log.d(TAG, "addVideoPath:substring1 "+substring1 +"::"+substring1.equals(".mov"));
+                if (MediaFile.isVideoFileType(file.getAbsolutePath()) || substring1.equals(".mov")) {
                     //说明这个文件夹里面有video
                     Log.d(TAG, "addVideoPath: 有video" + file.getAbsolutePath());
                     String absoluteFile = file.getAbsolutePath();
                     int    i            = absoluteFile.lastIndexOf("/");
                     String substring    = absoluteFile.substring(0, i);
                     if (mArrayList.contains(substring)) {
-                        Log.d(TAG, "addVideoPath: 已经包含了");
+                        Log.d(TAG, "addVideoPath: 已经包含了" + substring);
                     } else {
+                        Log.d(TAG, "addVideoPath: 没有包含进行添加" + substring);
                         mArrayList.add(substring);
                     }
                 }

@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -52,7 +53,7 @@ public class PicAndVidioActivity
     private int[] pic_video_button_bg = new int[]{R.mipmap.test_button_1,
                                                   R.mipmap.test_button_4,
                                                   R.mipmap.test_button_5};
-
+    private TextView tv_vr_left , tv_vr_right;
     private int     pic_video_bg_num = 0;
     private Handler mHandler         = new Handler() {
         @Override
@@ -377,6 +378,9 @@ public class PicAndVidioActivity
              .centerCrop()
              .diskCacheStrategy(DiskCacheStrategy.RESULT)
              .into(mIv_right);
+
+        tv_vr_left = (TextView) findViewById(R.id.tv_vr_left);
+        tv_vr_right = (TextView) findViewById(R.id.tv_vr_right);
     }
 
     private void setViewFromOrientation() {
@@ -528,7 +532,7 @@ public class PicAndVidioActivity
                                 Intent wifip2pIntent = new Intent(this, WifiP2pRecActivity.class);
 
                                 startActivity(wifip2pIntent);
-              //  setTestBG();
+//               setTestBG();
                 break;
             case R.id.wifi_p2p_right:
                 Intent wifip2pIntent2 = new Intent(this, WifiP2pRecActivity.class);
@@ -566,6 +570,14 @@ public class PicAndVidioActivity
         mTv_pic_right.setBackground(drawable);
         mTv_video.setBackground(drawable);
         mTv_video_right.setBackground(drawable);
+
+        if(pic_video_bg_num == 0){
+            tv_vr_left.setTextColor(Color.parseColor("#80ffffff"));
+            tv_vr_right.setTextColor(Color.parseColor("#80ffffff"));
+        }else{
+            tv_vr_left.setTextColor(Color.parseColor("#000000"));
+            tv_vr_right.setTextColor(Color.parseColor("#000000"));
+        }
 
     }
 

@@ -20,9 +20,11 @@ public class MediaFile {
     private static final String TAG = "MediaFile";
     // comma separated list of all file extensions supported by the media scanner
     public static String sFileExtensions;
+
     static {
         System.loadLibrary("native-lib");
     }
+
     // Audio file types
     public static final  int FILE_TYPE_MP3         = 1;
     public static final  int FILE_TYPE_M4A         = 2;
@@ -121,7 +123,7 @@ public class MediaFile {
         addFileType("WPL", FILE_TYPE_WPL, "application/vnd.ms-wpl");
 
         // compute file extensions list for native Media Scanner
-        StringBuilder    builder  = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         Iterator<String> iterator = sFileTypeMap.keySet()
                                                 .iterator();
 
@@ -164,6 +166,14 @@ public class MediaFile {
         MediaFileType type = getFileType(path);
         if (null != type) {
             return isVideoFileType(type.fileType);
+        }
+        Log.d(TAG, "isVideoFileType: " + path);
+        int i = path.lastIndexOf(".");
+        if (i != -1) {
+            String substring = path.substring(i);
+            if (substring.equals(".mov")) {
+                return true;
+            }
         }
         return false;
     }
@@ -228,27 +238,28 @@ public class MediaFile {
     //获取文件夹中 最晚创建的那个文件的时间
 
     public static long getLastFileTime(String s) {
-        File file = new File(s);
-        File[] files = file.listFiles();
-        boolean isFirst = true;
-        long lastTime = 0;
-        long temp = 0 ;
+        File    file     = new File(s);
+        File[]  files    = file.listFiles();
+        boolean isFirst  = true;
+        long    lastTime = 0;
+        long    temp     = 0;
         for (File f : files) {
-            if(isFirst){
-            lastTime = f.lastModified();
-                isFirst = false;
-            continue;
-            }
-            if(f.lastModified() > lastTime){
+            if (isFirst) {
                 lastTime = f.lastModified();
-                Log.d(TAG, "getLastFileTime: "+f.getAbsolutePath());
+                isFirst = false;
+                continue;
+            }
+            if (f.lastModified() > lastTime) {
+                lastTime = f.lastModified();
+                Log.d(TAG, "getLastFileTime: " + f.getAbsolutePath());
             }
         }
         return lastTime;
     }
 
-public static native long getCreateTile(String path);
-    public   static String getCurrentTime(long date) {
+    public static native long getCreateTile(String path);
+
+    public static String getCurrentTime(long date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd_HH:mm:ss");
         String           str    = format.format(new Date(date));
         return str;

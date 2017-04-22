@@ -63,6 +63,7 @@
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:text="Samson VR Player"
                           android:textSize="17sp"
+                          android:id="@+id/tv_vr_left"
                           android:textColor="#80ffffff"
                 />
                 <Button
@@ -129,6 +130,7 @@
                           android:text="Samson VR Player"
                         android:textSize="17sp"
                           android:textColor="#80ffffff"
+                          android:id="@+id/tv_vr_right"
                 />
                 <Button
                     android:id="@+id/new_pic_video_state_pic2"
