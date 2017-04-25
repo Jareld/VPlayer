@@ -15,15 +15,15 @@ public class UserEvent {
     private float   progress;
     private String fileName;
 
-    public int getFileLengthMB() {
+    public long getFileLengthMB() {
         return fileLengthMB;
     }
 
-    public void setFileLengthMB(int fileLengthMB) {
+    public void setFileLengthMB(long fileLengthMB) {
         this.fileLengthMB = fileLengthMB;
     }
 
-    private int fileLengthMB;
+    private long fileLengthMB;
     public UserEvent (String sName ){
         name = sName;
     }

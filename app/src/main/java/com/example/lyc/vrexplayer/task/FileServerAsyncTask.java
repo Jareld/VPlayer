@@ -33,7 +33,7 @@ public class FileServerAsyncTask
     private        Socket mClient;
     private static String substring;
     private static String nPath;
-    private        int    mFile_mb;
+    private        long    mFile_mb;
     private boolean isFinished = false;
     private boolean isAccept = false;
     /*
@@ -217,8 +217,9 @@ public class FileServerAsyncTask
 
                 String[] split = substring.split("-=-=");
                 substring = split[1];
-                int file_length = Integer.valueOf(split[0]);
+                long file_length = Long.valueOf(split[0]);
                 mFile_mb = file_length / 1024   ;
+
                 Log.d(TAG, "copyFileServer: " + file_length + "::" + mFile_mb + "::");
 
                 nPath = "Wifi-" + substring;

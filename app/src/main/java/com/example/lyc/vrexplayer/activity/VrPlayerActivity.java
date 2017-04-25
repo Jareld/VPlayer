@@ -381,7 +381,6 @@ public class VrPlayerActivity
                         mBtn_left_video_replay.setTextColor(Color.parseColor("#000000"));
                         mBtn_right_video_replay.setTextColor(Color.parseColor("#000000"));
                     }
-
                 }
                 return true;
 

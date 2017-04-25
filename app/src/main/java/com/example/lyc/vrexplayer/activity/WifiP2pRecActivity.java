@@ -234,12 +234,14 @@ public class WifiP2pRecActivity
                                                      if (mRec_progress.getVisibility() == View.GONE) {
                                                          mRec_progress.setVisibility(View.VISIBLE);
                                                      }
+
                                                      float progress = (userEvent.getProgress() * 100 / userEvent.getFileLengthMB());
-                                                     Log.d(TAG, "run: " + progress);
+                                                     Log.d(TAG, "run: " + progress +"::"+userEvent.getProgress()+"::"+userEvent.getFileLengthMB());
                                                      BigDecimal b = new BigDecimal(progress);
                                                      progress = b.setScale(1,
                                                                            BigDecimal.ROUND_HALF_UP)
                                                                  .floatValue();
+
                                                      mRec_progress.setProgress(progress);
 
                                                  }
