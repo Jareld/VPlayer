@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /*
  *  @项目名：  TestWifiDerect 
@@ -33,9 +34,14 @@ public class FileServerAsyncTask
     private        Socket mClient;
     private static String substring;
     private static String nPath;
-    private        long    mFile_mb;
-    private boolean isFinished = false;
-    private boolean isAccept = false;
+    private        long   mFile_mb = 0;
+    private boolean isFinished    = false;
+    private boolean isAccept      = false;
+    public  long    hasRecvLength = 0;
+    private int               mFile_size;
+    private ArrayList<Long>   mFile_lengths;
+    private ArrayList<String> mFile_names;
+    private ArrayList<File> mFileList;
     /*
        * (non-Javadoc)
        *
@@ -81,6 +87,7 @@ public class FileServerAsyncTask
             mClient.setReuseAddress(true);
             mClient.setReceiveBufferSize(1024 * 1024 * 10);
 
+
                 /*Returns an input stream to read data from this socket*/
             InputStream inputstream = mClient.getInputStream();
 
@@ -90,6 +97,7 @@ public class FileServerAsyncTask
 
             //服务器接受数据
             String filePath = copyFileServer(inputstream, null, buf);
+            inputstream.close();
             try {
                 Log.d(TAG, "doInBackground: 进入关闭之前");
                 if (serverSocket != null && !serverSocket.isClosed()) {
@@ -157,8 +165,6 @@ public class FileServerAsyncTask
             RxBus.getInstance()
                  .post(new UserEvent(fileMB, "transfer_file_start"));
             UserEvent userEvent = new UserEvent(0, "doing");
-
-
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
                 out.flush();
@@ -167,7 +173,7 @@ public class FileServerAsyncTask
                 userEvent.setFileLengthMB(fileMB);
                 RxBus.getInstance()
                      .post(userEvent);
-              //  LogUtils.logInfo(TAG, "HYcopyFile: ", "百分比" + length + "::");
+                //  LogUtils.logInfo(TAG, "HYcopyFile: ", "百分比" + length + "::");
             }
             Log.d(TAG, "copyFileClient: 百分比之后");
             RxBus.getInstance()
@@ -193,10 +199,12 @@ public class FileServerAsyncTask
 
 
         int  len;
-        long length = 0;
+        long length       = 0;
+        long mFile_length = 0;
         RxBus.getInstance()
              .post(new UserEvent(0, "serverReceiving"));
         try {
+            float changdu = 0;
 
             //在第一次的时候完成切割
             long   fileTime = System.currentTimeMillis();
@@ -216,39 +224,51 @@ public class FileServerAsyncTask
                 substring = filepath.substring(first + 10, last);
 
                 String[] split = substring.split("-=-=");
-                substring = split[1];
-                long file_length = Long.valueOf(split[0]);
-                mFile_mb = file_length / 1024   ;
-
-                Log.d(TAG, "copyFileServer: " + file_length + "::" + mFile_mb + "::");
-
-                nPath = "Wifi-" + substring;
-
-
-                LogUtils.logInfo(TAG,
-                                 "copyFileServer",
-                                 "first=" + first + "last" + last + "substring" + "::" + nPath + "::"+path);
-
+                //                substring = split[1];
+                //                mFile_length = Long.valueOf(split[0]);
+                //                mFile_mb = mFile_length / 1024   ;
+                //
+                //                Log.d(TAG, "copyFileServer: " + mFile_length + "::" + mFile_mb + "::");
+                //
+                //                nPath = "Wifi-" + substring;
+                //
+                //
+                //                LogUtils.logInfo(TAG,
+                //                                 "copyFileServer",
+                //                                 "first=" + first + "last" + last + "substring" + "::" + nPath + "::"+path);
+                //第一看一共有多少个文件
+                mFile_size = Integer.valueOf(split[0]);
+                mFile_lengths = new ArrayList<>();
+                mFile_names = new ArrayList<>();
                 int lastIndexOfXG = path.lastIndexOf("/");
-                if(lastIndexOfXG != path.length() -1){
-                    path = path +"/";
+                if (lastIndexOfXG != path.length() - 1) {
+                    path = path + "/";
                 }
-                f = new File(path + nPath);
-                if (f.exists()) {
-                    //如果已经存在了
-                    //那么就会出现同名的情况，就要做修改
-                    f = handleSameName(path, nPath, 1);
+                for (int i = 0; i < (split.length - 1) / 2; i++) {
+                    mFile_names.add(split[2 * i + 2]);
+                    mFile_lengths.add(Long.valueOf(split[2 * i + 1]));
+                }
+                mFileList = new ArrayList<>();
+                for (int i = 0; i < mFile_names.size(); i++) {
+                    f = new File(path + "Wifi-" + mFile_names.get(i));
+                    if (f.exists()) {
+                        //如果已经存在了
+                        //那么就会出现同名的情况，就要做修改
+                        f = handleSameName(path, "Wifi-" + mFile_names.get(i), 1);
 
-                } else {
-                    File dirs = new File(f.getParent());
+                    } else {
+                        File dirs = new File(f.getParent());
 
-                    if (!dirs.exists()) { dirs.mkdirs(); }
+                        if (!dirs.exists()) { dirs.mkdirs(); }
 
-                    f.createNewFile();
+                        f.createNewFile();
+                    }
+                    mFileList.add(f);
+                    mFile_mb += mFile_lengths.get(i);
                 }
 
 
-                out = new FileOutputStream(f);
+                out = new FileOutputStream(mFileList.get(0));
 
                 if ((len - last - 12) == 0) {
 
@@ -258,27 +278,77 @@ public class FileServerAsyncTask
                     for (int i = 0; i < (len - last - 12); i++) {
                         newByTE[i] = buf[(last + 12 + i)];
                     }
+                    changdu += newByTE.length;
                     out.write(newByTE, 0, (len - last - 12));
                     out.flush();
                 }
             }
-
-            float       changdu   = 0;
+            int       doingFile = 0;
             UserEvent userEvent = new UserEvent(0, "doing");
-            userEvent.setFileLengthMB(mFile_mb);
+            userEvent.setFileLengthMB(mFile_mb / 1024);
             isFinished = false;
-            while ((len = inputStream.read(buf)) != -1) {
-               // Log.d(TAG, "copyFileServer: 断开了么？" + len );
-                out.write(buf, 0, len);
-                changdu += len;
-                userEvent.setProgress(changdu / 1024   );
-                RxBus.getInstance()
-                     .post(userEvent);
-                out.flush();
+
+            for (int i = 0; i < mFile_size; i++) {
+
+                while ((len = inputStream.read(buf)) != -1) {
+                    Log.d(TAG, "copyFileServer: "+changdu);
+                    changdu += len;
+                    if(changdu >= mFile_lengths.get(i)){
+                        //说明要切割了
+                        float haixu = mFile_lengths.get(i) - (changdu - len);
+
+                        Log.d(TAG, "copyFileServer: haixu"+ haixu + "::" + len +"::" + changdu +"::" + mFile_lengths.get(i));
+                        out.write(buf , 0 , (int) haixu);
+                        hasRecvLength += len;
+                        userEvent.setProgress(mFile_lengths.get(i) / 1024);
+                        RxBus.getInstance()
+                             .post(userEvent);
+                        out.flush();
+                        out.close();
+                        if(i == mFile_size-1){
+
+                        }else{
+                            Log.d(TAG, "copyFileServer: 应该到这里面来看看" + haixu +"::" + (len - haixu));
+                            out = new FileOutputStream(mFileList.get(i+1));
+
+                            out.write(buf , (int) haixu, (int) (len - haixu));
+                            changdu = len - haixu;
+                            out.flush();
+                        }
+                        break;
+
+                    }else {
+                        out.write(buf, 0, len);
+                        hasRecvLength += len;
+                        userEvent.setProgress(changdu / 1024);
+                        RxBus.getInstance()
+                             .post(userEvent);
+                        out.flush();
+                    }
+                }
+                //到了这里说明 长度已经大于了
             }
-            Log.d(TAG, "copyFileServer: 断开了么？ ");
-            out.close();
-            inputStream.close();
+
+//            while ((len = inputStream.read(buf)) != -1) {
+//
+//                changdu += len;
+//                out.write(buf, 0, len);
+//
+//
+//                hasRecvLength += len;
+//                userEvent.setProgress(changdu / 1024);
+//                RxBus.getInstance()
+//                     .post(userEvent);
+//                out.flush();
+//
+//                if (changdu == mFile_length) {
+//                    Log.d(TAG, "copyFileServer:  长度刚好完成");
+//                    copyFileServer(inputStream, null, buf);
+//                }
+//            }
+//            Log.d(TAG, "copyFileServer: 断开了么？ " + hasRecvLength);
+//            out.close();
+
         } catch (IOException e) {
             LogUtils.logException(TAG, "这里是服务端 不断写入的时候出现的错误" + e.toString());
             return "";
@@ -316,15 +386,18 @@ public class FileServerAsyncTask
                   "getConnected: sever" + "::" + mClient.isClosed() + "::" + mClient.isConnected());
         }
         if (serverSocket != null) {
-            Log.d(TAG, "getConnected: sever" + serverSocket.isClosed() +"::"+(mClient == null) +"::"+isFinished);
+            Log.d(TAG,
+                  "getConnected: sever" + serverSocket.isClosed() + "::" + (mClient == null) + "::" + isFinished);
         }
         Log.d(TAG, "getConnected: sever" + isAccept);
 
     }
-    public  boolean getIsAccept(){
+
+    public boolean getIsAccept() {
         return isAccept;
     }
-    public boolean getIsFinished(){
+
+    public boolean getIsFinished() {
         return isFinished;
     }
 }

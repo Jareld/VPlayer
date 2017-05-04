@@ -86,6 +86,9 @@ public class WifiP2pRecActivity
                             mServerTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         }
 
+                    }else{
+                        mServerTask = new FileServerAsyncTask();
+                        mServerTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
 
                     break;
@@ -172,9 +175,9 @@ public class WifiP2pRecActivity
                                                          mTv_rec_file.setText("传输文件的状态：传输完成:");
                                                      }
                                                      //重新执行一次等待的任务
-
-                                                     Log.d(TAG,
-                                                           "run: 任务" + mServerTask.getStatus());
+//
+//                                                     Log.d(TAG,
+//                                                           "run: 任务" + mServerTask.getStatus());
 
                                                      mHandler.sendEmptyMessageDelayed(RESTART_REC,
                                                                                       30);
