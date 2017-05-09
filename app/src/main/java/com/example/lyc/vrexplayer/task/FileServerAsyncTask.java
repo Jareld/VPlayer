@@ -34,14 +34,15 @@ public class FileServerAsyncTask
     private        Socket mClient;
     private static String substring;
     private static String nPath;
-    private        long   mFile_mb = 0;
+    private long    mFile_mb      = 0;
     private boolean isFinished    = false;
     private boolean isAccept      = false;
     public  long    hasRecvLength = 0;
     private int               mFile_size;
     private ArrayList<Long>   mFile_lengths;
     private ArrayList<String> mFile_names;
-    private ArrayList<File> mFileList;
+    private ArrayList<File>   mFileList;
+    private long              mAll_length;
     /*
        * (non-Javadoc)
        *
@@ -114,6 +115,7 @@ public class FileServerAsyncTask
             }
 
             //告诉服务器接受完成  并且 重新开启一次接受任务
+            userEvent.setFilesSize(mFile_size);
             userEvent.setName("hasReceived");
             userEvent.setFileName(filePath);
             RxBus.getInstance()
@@ -204,7 +206,7 @@ public class FileServerAsyncTask
         RxBus.getInstance()
              .post(new UserEvent(0, "serverReceiving"));
         try {
-            float changdu = 0;
+            long changdu = 0;
 
             //在第一次的时候完成切割
             long   fileTime = System.currentTimeMillis();
@@ -249,7 +251,10 @@ public class FileServerAsyncTask
                     mFile_lengths.add(Long.valueOf(split[2 * i + 1]));
                 }
                 mFileList = new ArrayList<>();
+                mAll_length = 0;
                 for (int i = 0; i < mFile_names.size(); i++) {
+                    mAll_length += mFile_lengths.get(i);
+                    Log.d(TAG, " 每个文件的长度" + mFile_lengths.get(i));
                     f = new File(path + "Wifi-" + mFile_names.get(i));
                     if (f.exists()) {
                         //如果已经存在了
@@ -271,56 +276,64 @@ public class FileServerAsyncTask
                 out = new FileOutputStream(mFileList.get(0));
 
                 if ((len - last - 12) == 0) {
+                    Log.d(TAG, "copyFileServer长度: 等于0");
 
                 } else {
+                    Log.d(TAG, "copyFileServer长度: 不等于0");
                     byte[] newByTE = new byte[(len - last - 12)];
 
                     for (int i = 0; i < (len - last - 12); i++) {
                         newByTE[i] = buf[(last + 12 + i)];
                     }
                     changdu += newByTE.length;
+                    hasRecvLength += newByTE.length;
                     out.write(newByTE, 0, (len - last - 12));
                     out.flush();
                 }
             }
             int       doingFile = 0;
             UserEvent userEvent = new UserEvent(0, "doing");
-            userEvent.setFileLengthMB(mFile_mb / 1024);
+            userEvent.setFileLengthMB(mAll_length / 1024);
             isFinished = false;
-
+            Log.d(TAG, "copyFileServer: 第一次" + changdu);
             for (int i = 0; i < mFile_size; i++) {
 
                 while ((len = inputStream.read(buf)) != -1) {
-                    Log.d(TAG, "copyFileServer: "+changdu);
-                    changdu += len;
-                    if(changdu >= mFile_lengths.get(i)){
-                        //说明要切割了
-                        float haixu = mFile_lengths.get(i) - (changdu - len);
 
-                        Log.d(TAG, "copyFileServer: haixu"+ haixu + "::" + len +"::" + changdu +"::" + mFile_lengths.get(i));
-                        out.write(buf , 0 , (int) haixu);
+                    changdu += len;
+                    if (changdu >= mFile_lengths.get(i)) {
+                        //说明要切割了
+                        long haixu = mFile_lengths.get(i) - (changdu - len);
+
+                        Log.d(TAG,
+                              "copyFileServer: haixu" + haixu + "::" + len + "::" + changdu + "::" + mFile_lengths.get(
+                                      i));
+
+                        out.write(buf, 0, (int) haixu);
+
+                        Log.d(TAG, "copyFileServer: 每个文件的长度" + (changdu - len + haixu));
                         hasRecvLength += len;
-                        userEvent.setProgress(mFile_lengths.get(i) / 1024);
+                        userEvent.setProgress(hasRecvLength / 1024);
                         RxBus.getInstance()
                              .post(userEvent);
                         out.flush();
                         out.close();
-                        if(i == mFile_size-1){
+                        if (i == mFile_size - 1) {
 
-                        }else{
-                            Log.d(TAG, "copyFileServer: 应该到这里面来看看" + haixu +"::" + (len - haixu));
-                            out = new FileOutputStream(mFileList.get(i+1));
-
-                            out.write(buf , (int) haixu, (int) (len - haixu));
+                        } else {
+                            Log.d(TAG,
+                                  "copyFileServer: 应该到这里面来看看" + haixu + "::" + (len - haixu) + "::目前的长度" + changdu);
+                            out = new FileOutputStream(mFileList.get(i + 1));
+                            out.write(buf, (int) haixu, (int) (len - haixu));
                             changdu = len - haixu;
                             out.flush();
                         }
                         break;
 
-                    }else {
+                    } else {
                         out.write(buf, 0, len);
                         hasRecvLength += len;
-                        userEvent.setProgress(changdu / 1024);
+                        userEvent.setProgress(hasRecvLength / 1024);
                         RxBus.getInstance()
                              .post(userEvent);
                         out.flush();
@@ -329,25 +342,25 @@ public class FileServerAsyncTask
                 //到了这里说明 长度已经大于了
             }
 
-//            while ((len = inputStream.read(buf)) != -1) {
-//
-//                changdu += len;
-//                out.write(buf, 0, len);
-//
-//
-//                hasRecvLength += len;
-//                userEvent.setProgress(changdu / 1024);
-//                RxBus.getInstance()
-//                     .post(userEvent);
-//                out.flush();
-//
-//                if (changdu == mFile_length) {
-//                    Log.d(TAG, "copyFileServer:  长度刚好完成");
-//                    copyFileServer(inputStream, null, buf);
-//                }
-//            }
-//            Log.d(TAG, "copyFileServer: 断开了么？ " + hasRecvLength);
-//            out.close();
+            //            while ((len = inputStream.read(buf)) != -1) {
+            //
+            //                changdu += len;
+            //                out.write(buf, 0, len);
+            //
+            //
+            //                hasRecvLength += len;
+            //                userEvent.setProgress(changdu / 1024);
+            //                RxBus.getInstance()
+            //                     .post(userEvent);
+            //                out.flush();
+            //
+            //                if (changdu == mFile_length) {
+            //                    Log.d(TAG, "copyFileServer:  长度刚好完成");
+            //                    copyFileServer(inputStream, null, buf);
+            //                }
+            //            }
+            //            Log.d(TAG, "copyFileServer: 断开了么？ " + hasRecvLength);
+            //            out.close();
 
         } catch (IOException e) {
             LogUtils.logException(TAG, "这里是服务端 不断写入的时候出现的错误" + e.toString());

@@ -12,8 +12,18 @@ public class UserEvent {
     private static final String TAG = "UserEvent";
 
     private String name;
-    private float   progress;
+    private float  progress;
     private String fileName;
+    private int    files_size;
+
+    public void setFilesSize(int size) {
+        this.files_size = size;
+    }
+
+    public int getFilesSize() {
+        return files_size;
+
+    }
 
     public long getFileLengthMB() {
         return fileLengthMB;
@@ -24,9 +34,11 @@ public class UserEvent {
     }
 
     private long fileLengthMB;
-    public UserEvent (String sName ){
+
+    public UserEvent(String sName) {
         name = sName;
     }
+
     public UserEvent(long l, String n) {
         name = n;
         progress = l;
@@ -51,7 +63,12 @@ public class UserEvent {
     public void setFileName(String fn) {
         this.fileName = fn;
     }
-    public String getFileName(){
+
+    public String getFileName() {
         return fileName;
+    }
+
+    public int getFiles_size() {
+        return files_size;
     }
 }

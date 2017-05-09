@@ -288,6 +288,13 @@ public class DetailPicAcitvity
 
         mDefaultDisplay = getWindowManager().getDefaultDisplay();
         Display.Mode[] supportedModes = mDefaultDisplay.getSupportedModes();
+
+        for(int i = 0 ; i < 2 ; i++){
+            int physicalWidth = supportedModes[i].getPhysicalWidth();
+            int physicalHeight = supportedModes[i].getPhysicalHeight();
+            Log.d(TAG, "initDisplay: "+"::" + physicalWidth + "::" + physicalHeight);
+
+        }
         mHas4K = false;
         for (Display.Mode mode1 : supportedModes) {
             if (mode1.getPhysicalHeight() == 3840 || mode1.getPhysicalWidth() == 3840) {

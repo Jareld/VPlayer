@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
-import android.view.animation.ScaleAnimation;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.example.lyc.vrexplayer.R;
+import com.example.lyc.vrexplayer.view.MyAnimationDrawable;
 
 public class LogoAcitivity
         extends AppCompatActivity
@@ -19,14 +18,20 @@ public class LogoAcitivity
 
     private static final int STARTACTIVITY = 1;
     private ImageView mIv_logo;
+    private View mLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_logo_acitivity);
         getSupportActionBar().hide();
-        //最终钉板
-
+        getWindow().getDecorView()
+                   .setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        mLayout = getLayoutInflater().from(this)
+                                     .inflate(R.layout.activity_logo_acitivity, null);
+        this.getWindow()
+            .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                      WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(mLayout);
 
 
         initView();
@@ -56,33 +61,26 @@ public class LogoAcitivity
     }
 
     private void initData() {
-        AnimationSet animationSet = new AnimationSet(false);
 
-        RotateAnimation rotateAnimation =new RotateAnimation( 0 , 360 ,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-        rotateAnimation.setDuration(2000);
 
-        animationSet.addAnimation(rotateAnimation);
-        ScaleAnimation scaleAnimation= new ScaleAnimation( 0 ,1 , 0 ,1 ,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-        scaleAnimation.setDuration(2000);
+        MyAnimationDrawable.animateRawManuallyFromXML(R.drawable.logo_animlist,
+                                                      mIv_logo, new Runnable() {
 
-        animationSet.addAnimation(scaleAnimation);
-        animationSet.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+                    @Override
+                    public void run() {
+                        // TODO onStart
+                        // 动画开始时回调
 
-            }
+                    }
+                }, new Runnable() {
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-               mHandler.sendEmptyMessageDelayed(STARTACTIVITY , 1000);
-            }
+                    @Override
+                    public void run() {
+                        // TODO onComplete
+                        mHandler.sendEmptyMessageDelayed(STARTACTIVITY ,1000);
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-                mIv_logo.startAnimation(animationSet);
+                    }
+                });
     }
 
     private void initEvent() {
