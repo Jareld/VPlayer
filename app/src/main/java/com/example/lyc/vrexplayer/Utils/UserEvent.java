@@ -1,5 +1,7 @@
 package com.example.lyc.vrexplayer.Utils;
 
+import java.util.ArrayList;
+
 /*
  *  @项目名：  TestWifiDerect 
  *  @包名：    com.example.lyc2.testwifiderect.utils
@@ -70,5 +72,14 @@ public class UserEvent {
 
     public int getFiles_size() {
         return files_size;
+    }
+
+
+    public ArrayList<String> pathsArr;
+    public void setPathsArr(ArrayList<String> arrayList){
+        pathsArr = arrayList;
+    }
+    public ArrayList<String> getPathsArr(){
+        return pathsArr;
     }
 }

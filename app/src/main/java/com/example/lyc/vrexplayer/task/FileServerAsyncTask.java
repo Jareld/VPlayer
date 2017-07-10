@@ -116,7 +116,13 @@ public class FileServerAsyncTask
 
             //告诉服务器接受完成  并且 重新开启一次接受任务
             userEvent.setFilesSize(mFile_size);
+          ArrayList<String> arrayList = new ArrayList<>();
+            for(int i = 0 ; i < mFileList.size() ; i ++){
+              arrayList.add(mFileList.get(i).getAbsolutePath());
+          }
+            userEvent.setPathsArr(arrayList);
             userEvent.setName("hasReceived");
+
             userEvent.setFileName(filePath);
             RxBus.getInstance()
                  .post(userEvent);

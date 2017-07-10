@@ -13,8 +13,10 @@
     tools:context="com.example.lyc.vrexplayer.activity.WifiP2pRecActivity">
 
     <LinearLayout android:layout_width="match_parent"
+                  android:visibility="gone"
                   android:layout_height="match_parent"
                   android:layout_marginLeft="50dp"
+                  android:id="@+id/second_view"
                   android:layout_marginTop="30dp"
                   android:orientation="vertical">
         <LinearLayout android:layout_width="wrap_content"
@@ -65,5 +67,27 @@
 
     </LinearLayout>
 
-
+<LinearLayout
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/first_view"
+    android:orientation="vertical"
+  android:layout_gravity="center"
+    android:gravity="center">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/available_space"
+        android:textSize="20sp"
+        android:textColor="#ff0000"
+        />
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/available_space_confirm"
+        android:background="@mipmap/test_button_1"
+        android:text="确定"/>
+</LinearLayout>
 </LinearLayout>

@@ -105,7 +105,7 @@ public class VrPlayerActivity
         this.getWindow()
             .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                       WindowManager.LayoutParams.FLAG_FULLSCREEN);
-      //  initDisplay();
+        //  initDisplay();
         setContentView(mLayout);
         initViews();
         initData();
@@ -113,21 +113,37 @@ public class VrPlayerActivity
         mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: layout" + mLayout.getSystemUiVisibility());
-                if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
-                    mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-                } else {
-                    mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-                }
-                if (mVvVRPlayer.isPlaying()) {
-                    mVvVRPlayer.pause();
-                    mDoubleSeekBar.setVisibility(View.VISIBLE);
-                    mLl_play.setVisibility(View.VISIBLE);
 
-                } else {
-                    mVvVRPlayer.start();
-                    mDoubleSeekBar.setVisibility(View.GONE);
-                    mLl_play.setVisibility(View.GONE);
+                if (mLl_video_next_or_replay.getVisibility() == View.GONE) {
+                    Log.d(TAG, "onClick: layout" + mLayout.getSystemUiVisibility());
+                    if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                        mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                    } else {
+                        mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    }
+                    if (mVvVRPlayer.isPlaying()) {
+
+                        mVvVRPlayer.pause();
+                        mDoubleSeekBar.setVisibility(View.VISIBLE);
+                        mLl_play.setVisibility(View.VISIBLE);
+
+                    } else {
+
+                        mVvVRPlayer.start();
+                        mDoubleSeekBar.setVisibility(View.GONE);
+                        mLl_play.setVisibility(View.GONE);
+                        if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                            mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                        }
+                    }
+                }else{
+                    if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                        mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+                    } else {
+                        mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    }
+
                 }
             }
         });
@@ -154,8 +170,7 @@ public class VrPlayerActivity
         Display.Mode[] supportedModes = mDefaultDisplay.getSupportedModes();
         for (Display.Mode mode1 : supportedModes) {
             Log.d(TAG,
-                  "onClick: 22" + mode1.getPhysicalWidth() + "::" + mode1.getPhysicalHeight() + "::" +
-                          mode1.getModeId() + "::" + mode1.getRefreshRate());
+                  "onClick: 22" + mode1.getPhysicalWidth() + "::" + mode1.getPhysicalHeight() + "::" + mode1.getModeId() + "::" + mode1.getRefreshRate());
         }
 
         //
@@ -186,12 +201,17 @@ public class VrPlayerActivity
             }
         });
 
+
         mVvVRPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Log.d(TAG, "onCompletion: 播放完成");
                 status_play_or_next = STATUS_NEXT_OR_REPLAY;
                 mLl_video_next_or_replay.setVisibility(View.VISIBLE);
+
+                mDoubleSeekBar.setVisibility(View.GONE);
+                mLl_play.setVisibility(View.GONE);
+
                 mBtn_left_video_next.setSelected(true);
                 mBtn_left_video_replay.setSelected(false);
                 mBtn_left_video_next.setTextColor(Color.parseColor("#ff0000"));
@@ -210,7 +230,7 @@ public class VrPlayerActivity
     private void initData() {
         mPosition = getIntent().getIntExtra("position", -1);
         Uri uri;
-        Log.d(TAG, "initData: "+mPosition);
+        Log.d(TAG, "initData: " + mPosition);
         if (mPosition != -1) {
             mVideos = getIntent().getStringArrayListExtra("Videos");
             FILEPATH = mVideos.get(mPosition);
@@ -442,14 +462,14 @@ public class VrPlayerActivity
                     if (mBtn_left_video_next.isSelected()) {
                         //这里就不需要重置状态了
                         Log.d(TAG, "onKeyDown: 播放下一曲");
-                        if(mPosition == mVideos.size() - 1){
+                        if (mPosition == mVideos.size() - 1) {
                             //说明到顶了 重新开始播放
-                            mPosition = 0 ;
-                        }else{
+                            mPosition = 0;
+                        } else {
                             mPosition++;
                         }
 
-                        String s = mVideos.get(mPosition);
+                        String s     = mVideos.get(mPosition);
                         Uri    parse = Uri.parse(s);
                         mVvVRPlayer.setVideoPath(parse.toString());
                         mVvVRPlayer.start();
@@ -598,10 +618,10 @@ public class VrPlayerActivity
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_video_next_left:
-                if(mPosition == mVideos.size() - 1){
+                if (mPosition == mVideos.size() - 1) {
                     //说明到顶了 重新开始播放
-                    mPosition = 0 ;
-                }else{
+                    mPosition = 0;
+                } else {
                     mPosition++;
                 }
 
@@ -618,18 +638,24 @@ public class VrPlayerActivity
                 mBtn_right_video_next.setTextColor(Color.parseColor("#ff0000"));
                 mBtn_left_video_replay.setTextColor(Color.parseColor("#000000"));
                 mBtn_right_video_replay.setTextColor(Color.parseColor("#000000"));
+
+                if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                    mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+                }
+
             }
-                break;
+            break;
             case R.id.btn_video_next_right:
-                if(mPosition == mVideos.size() - 1){
+                if (mPosition == mVideos.size() - 1) {
                     //说明到顶了 重新开始播放
-                    mPosition = 0 ;
-                }else{
+                    mPosition = 0;
+                } else {
                     mPosition++;
                 }
 
                 String s = mVideos.get(mPosition);
-                Uri    parse = Uri.parse(s);
+                Uri parse = Uri.parse(s);
                 mVvVRPlayer.setVideoPath(parse.toString());
                 mVvVRPlayer.start();
                 status_play_or_next = STATUS_PLAYING;
@@ -640,21 +666,28 @@ public class VrPlayerActivity
                 mBtn_right_video_next.setTextColor(Color.parseColor("#ff0000"));
                 mBtn_left_video_replay.setTextColor(Color.parseColor("#000000"));
                 mBtn_right_video_replay.setTextColor(Color.parseColor("#000000"));
+                if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                    mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+                }
                 break;
             case R.id.btn_video_replay_left:
                 mVvVRPlayer.seekTo(0);
                 mVvVRPlayer.start();
-        //重置状态
-        status_play_or_next = STATUS_PLAYING;
-        mLl_video_next_or_replay.setVisibility(View.GONE);
-        mBtn_left_video_next.setSelected(true);
-        mBtn_left_video_replay.setSelected(false);
-        mBtn_left_video_next.setTextColor(Color.parseColor("#ff0000"));
-        mBtn_right_video_next.setTextColor(Color.parseColor("#ff0000"));
-        mBtn_left_video_replay.setTextColor(Color.parseColor("#000000"));
-        mBtn_right_video_replay.setTextColor(Color.parseColor("#000000"));
+                //重置状态
+                status_play_or_next = STATUS_PLAYING;
+                mLl_video_next_or_replay.setVisibility(View.GONE);
+                mBtn_left_video_next.setSelected(true);
+                mBtn_left_video_replay.setSelected(false);
+                mBtn_left_video_next.setTextColor(Color.parseColor("#ff0000"));
+                mBtn_right_video_next.setTextColor(Color.parseColor("#ff0000"));
+                mBtn_left_video_replay.setTextColor(Color.parseColor("#000000"));
+                mBtn_right_video_replay.setTextColor(Color.parseColor("#000000"));
+                if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                    mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        break;
+                }
+                break;
             case R.id.btn_video_replay_right:
                 mVvVRPlayer.seekTo(0);
                 mVvVRPlayer.start();
@@ -667,8 +700,12 @@ public class VrPlayerActivity
                 mBtn_right_video_next.setTextColor(Color.parseColor("#ff0000"));
                 mBtn_left_video_replay.setTextColor(Color.parseColor("#000000"));
                 mBtn_right_video_replay.setTextColor(Color.parseColor("#000000"));
+                if (mLayout.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_VISIBLE) {
+                    mLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
+                }
                 break;
+
             default:
                 break;
         }

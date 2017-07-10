@@ -55,7 +55,8 @@ public class FilesActivity
     private SelectedPosition mSelectedPostion = new SelectedPosition();
     private ImageView mIv_left;
     private ImageView mIv_right;
-
+    public static boolean isFilesPicFinished = false;
+    public static boolean isFilesVideoFinished = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +117,27 @@ public class FilesActivity
              .into(mIv_right);
     }
 
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart: 111");
+        if(isFilesPicFinished){
+            isFilesPicFinished = false;
+            PicAndVidioActivity.isPicFinished = true;
+            finish();
+        }else if(isFilesVideoFinished){
+            isFilesVideoFinished = false;
+            PicAndVidioActivity.isVideoFinished = true;
+            finish();
+        }
+
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume: 111");
+        super.onResume();
+    }
 
     private void initData() {
         mContext = getApplicationContext();
@@ -545,6 +567,11 @@ public class FilesActivity
     public void onScrollViewKeydownChanged(int keyCode) {
 
 
+        Log.d(TAG, "onScrollViewKeydownChanged: "+keyCode+ "::" + mArrayList.size());
+        if(mArrayList.size() == 0){
+            return;
+        }
+
         if (mSelectedPostion.getIsLongClick()) {
             Toast.makeText(mContext, "请先按Back键退出WIFI文件传输模式", Toast.LENGTH_SHORT)
                  .show();
@@ -635,7 +662,7 @@ public class FilesActivity
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 Log.d(TAG,
-                      "onScrollViewKeydownChanged: " + mArrayList.get(mSelectedPostion.getPosition_i()));
+                      "onScrollViewKeydownChanged: " + mArrayList.get(mSelectedPostion.getPosition_i()) + "::"+mArrayList.size());
 
                 if (mVideo_Pic == PIC) {
                     Intent intent = new Intent(mContext, PicAcitivity.class);
@@ -664,7 +691,6 @@ public class FilesActivity
 
     private ArrayList getOneOrTwoPath(String path) {
         ArrayList<String> arrayList = new ArrayList<>();
-
         File   file  = new File(path);
         File[] files = file.listFiles();
         if (mVideo_Pic == PIC) {

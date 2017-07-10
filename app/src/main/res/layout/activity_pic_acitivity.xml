@@ -7,6 +7,22 @@
     android:layout_height="match_parent"
 
     tools:context="com.example.lyc.vrexplayer.activity.PicAcitivity">
+
+
+    <Button
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_cancle_del"
+        android:textSize="15sp"
+        android:visibility="gone"
+        android:text="删除"
+        />
+
+
+
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:orientation="horizontal">

@@ -20,12 +20,12 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -153,7 +153,13 @@ public class MainActivity
     private ImageView      mIv_right;
     private View           mLayout;
     private boolean mIsSelctedClick = false;
-
+    private Button mBtn_cancle_del;
+    private static final int CLICK_STATE_LONG_CLICK = 3;
+    private static final int CLICK_STATE_SHORT_CLICK =4;
+    private int click_state = CLICK_STATE_SHORT_CLICK;
+    private SelectedPosition mLongClickBeforeSlection = new SelectedPosition();
+    private ArrayList<int []> hasLongSelected = new ArrayList<>();
+    private boolean isResetLongClick = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -553,6 +559,7 @@ public class MainActivity
         //        mTx_media.setOnClickListener(this);
         //        mTx_wifi_tranfer.setOnClickListener(this);
         mIv_fenxiang.setOnClickListener(this);
+        mBtn_cancle_del.setOnClickListener(this);
     }
 
     private void initData() {
@@ -660,7 +667,7 @@ public class MainActivity
         mScrollView.setOnScrollViewKeydownListener(this);
         mScrollView.setOrientation(mInitOrientation);
 
-        if (!mSelectedPostion.getIsFirst()) {
+        if (!mSelectedPostion.getIsFirst()&& !isResetLongClick) {
             //那么久要进行某一个 方框的xuanze
             if (mInitOrientation == ORIENTATION_LANDSCAPE) {
                 moveSetImageViewBG(mSelectedPostion.getPosition_i(),
@@ -685,6 +692,9 @@ public class MainActivity
             // mTx_wifi_tranfer.setText("媒体库：VR模式");
             mRl_title_container.setVisibility(View.GONE);
         }
+
+        mSelectedPostion.setPosition_i(0);
+        mSelectedPostion.setPosition_j(0);
     }
 
     private class FileComparator
@@ -1157,6 +1167,9 @@ public class MainActivity
         mRl_title_container = (RelativeLayout) findViewById(R.id.rl_title_container);
         //mTx_media = (TextView) findViewById(R.id.main_media);
         // mTx_wifi_tranfer = (TextView) findViewById(R.id.main_wifi_transfer);
+
+        mBtn_cancle_del = (Button) findViewById(R.id.btn_cancle_del_video);
+
         mIv_fenxiang = (ImageView) findViewById(R.id.iv_fenxiang);
         mTv_fenxiang_info = (TextView) findViewById(R.id.tv_fenxiang_info);
         mLv_devices = (ListView) findViewById(R.id.lv_discover_devices);
@@ -1324,6 +1337,57 @@ public class MainActivity
             //                //test 直接连接第一个
             //
             //                break;
+            case R.id.btn_cancle_del_video:
+                isResetLongClick = true;
+
+                if(hasLongSelected!=null && hasLongSelected.size()!=0){
+                    //进行删除工作
+                    for(int i = 0 ; i < hasLongSelected.size() ; i ++){
+
+                        Log.d(TAG, "onClick: "+hasLongSelected.get(i)[0] + "-"+hasLongSelected.get(i)[1] +"::"+ mVideos.get(2 * hasLongSelected.get(i)[0] + hasLongSelected.get(i)[1]-1));
+
+                        File file = new File(mVideos.get(2 * hasLongSelected.get(i)[0] + hasLongSelected.get(i)[1]-1));
+                        if(file!=null && file.exists()){
+                            file.delete();
+                        }
+                    }
+
+                }else{
+                    //进行取消工作
+
+
+                }
+                //无论怎么样都要重置
+                //重新更新数据
+                initData();
+                //重置一些状态
+                if(mVideos.size() == 0){
+                    Log.d(TAG, "initData:111 "+mVideos.size());
+                    FilesActivity.isFilesVideoFinished = true;
+                    finish();
+
+                }else {
+                    //被选中的长吉 要清空
+                    hasLongSelected.clear();
+                    //不管是不是第一次点击要清空
+                    mIsSelctedClick = false;
+                    //点击的状态要清空
+                    click_state = CLICK_STATE_SHORT_CLICK;
+
+                    mBtn_cancle_del.setVisibility(View.GONE);
+
+                    mSelectedPostion.setLongClick(false);
+
+                    moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                                       mSelectedPostion.getPosition_j(),
+                                       Color.parseColor("#ffffff00"));
+                    moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                                       mSelectedPostion.getPosition_j() + 2,
+                                       Color.parseColor("#ffffff00"));
+
+                    isResetLongClick = false;
+                }
+                break;
             default:
                 break;
         }
@@ -1385,127 +1449,7 @@ public class MainActivity
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (mSelectedPostion.getIsLongClick()) {
-            //mPeerLists.clear();
 
-            //如果是处于长安状态  那么 就先退出长安状态
-            mSelectedPostion.setLongClick(false);
-            //设置view的消失
-            mIv_fenxiang.setVisibility(View.GONE);
-            mTv_fenxiang_info.setVisibility(View.GONE);
-            if (mInitOrientation == ORIENTATION_LANDSCAPE) {
-                moveBeforeFocusNowColor(mSelectedPostion.getBefore_position_i(),
-                                        mSelectedPostion.getBefore_position_j() + 1,
-                                        Color.TRANSPARENT,
-                                        Color.parseColor("#ffffff00"));
-                //如果是横屏 并且处于长按状态  那么  tl——tile要missDiao
-                if (mInitOrientation == ORIENTATION_LANDSCAPE) {
-                    mRl_title_container.setVisibility(View.GONE);
-                }
-
-
-            } else {
-                moveBeforeFocusNowColor(mSelectedPostion.getBefore_position_i(),
-                                        mSelectedPostion.getBefore_position_j() + 1,
-                                        Color.TRANSPARENT,
-                                        Color.TRANSPARENT);
-            }
-            //重置一下状态
-            //            mWifiManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
-            //                @Override
-            //                public void onSuccess() {
-            //
-            //                }
-            //
-            //                @Override
-            //                public void onFailure(int i) {
-            //
-            //                }
-            //            });
-            //            mWifiManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
-            //                @Override
-            //                public void onSuccess() {
-            //
-            //                }
-            //
-            //                @Override
-            //                public void onFailure(int i) {
-            //
-            //                }
-            //            });
-
-
-            return;
-        } else if (mSelectedPostion.isDoing()) {
-            Log.d(TAG, "onBackPressed: 正在传输文件");
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-
-                    new AlertDialog.Builder(MainActivity.this).setTitle("文件正在传输，确认中止传输并退出？")
-                                                              .setPositiveButton("确认",
-                                                                                 new DialogInterface.OnClickListener() {
-                                                                                     @Override
-                                                                                     public void onClick(
-                                                                                             DialogInterface dialogInterface,
-                                                                                             int i)
-                                                                                     {
-                                                                                         MainActivity.super.onBackPressed();
-                                                                                     }
-                                                                                 })
-                                                              .setNegativeButton("取消",
-                                                                                 new DialogInterface.OnClickListener() {
-                                                                                     @Override
-                                                                                     public void onClick(
-                                                                                             DialogInterface dialogInterface,
-                                                                                             int i)
-                                                                                     {
-
-                                                                                     }
-                                                                                 })
-                                                              .show();
-
-                }
-
-            });
-            return;
-        } else if (mSelectedPostion.isSeverReceving()) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-
-                    new AlertDialog.Builder(MainActivity.this).setTitle("正在接受文件，确认停止接受并退出？")
-                                                              .setPositiveButton("确认",
-                                                                                 new DialogInterface.OnClickListener() {
-                                                                                     @Override
-                                                                                     public void onClick(
-                                                                                             DialogInterface dialogInterface,
-                                                                                             int i)
-                                                                                     {
-                                                                                         MainActivity.super.onBackPressed();
-                                                                                     }
-                                                                                 })
-                                                              .setNegativeButton("取消",
-                                                                                 new DialogInterface.OnClickListener() {
-                                                                                     @Override
-                                                                                     public void onClick(
-                                                                                             DialogInterface dialogInterface,
-                                                                                             int i)
-                                                                                     {
-
-                                                                                     }
-                                                                                 })
-                                                              .show();
-                }
-
-            });
-            return;
-
-        }
-        super.onBackPressed();
-    }
 
     //start-创建文件
     private String getRootPath() {
@@ -2095,11 +2039,38 @@ public class MainActivity
     }
 
     public void scrollItemCliclDouble(int i, int j) {
-        if (mSelectedPostion.getIsLongClick()) {
+        if (mSelectedPostion.getIsLongClick() || click_state == CLICK_STATE_LONG_CLICK) {
             //如果处于长安状态   那么
             //单机时间就不要处理
+            Log.d(TAG, "scrollItemCliclDouble: getIsLongClick");
+
+            if(hasLongSelected!=null && hasLongSelected.size() != 0){
+                for(int num = 0 ; num < hasLongSelected.size() ; num++){
+                    int[] ints = hasLongSelected.get(num);
+                    if(ints[0] == i && ints[1] == j){
+                        moveFocusNowColor(i , j ,Color.TRANSPARENT);
+                        hasLongSelected.remove(num);
+                        if(hasLongSelected.size() == 0){
+                            mBtn_cancle_del.setText("取消");
+                        }
+                        return;
+                    }
+                }
+            }
+
+
+            int[] hasLongClick = new int[2];
+            hasLongClick[0] = i ;
+            hasLongClick[1] = j;
+            hasLongSelected.add(hasLongClick);
+            moveFocusNowColor(i , j ,Color.parseColor("#ffff0000"));
+            if(hasLongSelected.size() != 0){
+                mBtn_cancle_del.setText("删除");
+            }
+
             return;
         }
+
         Log.d(TAG, "scrollItemCliclSingle: transfer_file" + i + "::" + j);
         moveBeforeFocusNowColor(i, j, Color.TRANSPARENT, Color.parseColor("#ffffff00"));
 
@@ -2121,8 +2092,54 @@ public class MainActivity
 
     }
 
+    private void moveFocusNowColor(int i, int j, int color) {
+        moveSetImageViewBG(i,
+                           j-1,
+                           color);
+        moveSetImageViewBG(i,
+                           j-1 + 2,
+                           color);
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(click_state == CLICK_STATE_LONG_CLICK){
+            isResetLongClick = true;
+            //无论怎么样都要重置
+            //重新更新数据
+            initData();
+            //重置一些状态
+            //被选中的长吉 要清空
+            hasLongSelected.clear();
+            //不管是不是第一次点击要清空
+            mIsSelctedClick = false;
+            //点击的状态要清空
+            click_state = CLICK_STATE_SHORT_CLICK;
+
+            mBtn_cancle_del.setVisibility(View.GONE);
+
+            mSelectedPostion.setLongClick(false);
+
+            moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                               mSelectedPostion.getPosition_j(),
+                               Color.parseColor("#ffffff00"));
+            moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                               mSelectedPostion.getPosition_j() + 2,
+                               Color.parseColor("#ffffff00"));
+
+            isResetLongClick = false;
+
+            return;
+        }
+
+        super.onBackPressed();
+
+    }
     public void moveBeforeFocusNowColor(int i, int j, int transparent, int color) {
-        if (i == mSelectedPostion.getPosition_i() && (j - 1) == mSelectedPostion.getPosition_j()) {
+        if (i == mSelectedPostion.getPosition_i() && (j - 1) == mSelectedPostion.getPosition_j() && click_state != CLICK_STATE_LONG_CLICK) {
             Log.d(TAG, "moveBeforeFocusNowColor: 目前被点击的  和 目前被选中的一样");
             //目前被点击的  和选中的一样  那么 仅仅只要跳转界面。
             mIsSelctedClick = true;
@@ -2168,52 +2185,34 @@ public class MainActivity
     }
 
     public void scrollItemLongCliclDouble(int i, int j) {
-        //        if (mSelectedPostion.getIsLongClick()) {
-        //            //如果处于长安状态  那么长安就不处理
-        //            return;
-        //        }
-        //        if (mSelectedPostion.isDoing()) {
-        //            Toast.makeText(MainActivity.mContext, " 正在传输中，等待任务完成再次传输", Toast.LENGTH_SHORT)
-        //                 .show();
-        //            if( mInitOrientation == ORIENTATION_LANDSCAPE){
-        //                mRl_title_container.setVisibility(View.VISIBLE);
-        //                if(handler.hasMessages(TITLE_LANDSCAPE_MISS)){
-        //                    handler.removeMessages(TITLE_LANDSCAPE_MISS);
-        //                }
-        //                handler.sendEmptyMessageDelayed(TITLE_LANDSCAPE_MISS , 5000);
-        //            }
-        //            return;
-        //        }else if(mSelectedPostion.isSeverReceving()){
-        //            Toast.makeText(MainActivity.mContext, " 正在接受文件中，等待任务完成再次传输", Toast.LENGTH_SHORT)
-        //                 .show();
-        //            if( mInitOrientation == ORIENTATION_LANDSCAPE){
-        //                mRl_title_container.setVisibility(View.VISIBLE);
-        //                if(handler.hasMessages(TITLE_LANDSCAPE_MISS)){
-        //                    handler.removeMessages(TITLE_LANDSCAPE_MISS);
-        //                }
-        //                handler.sendEmptyMessageDelayed(TITLE_LANDSCAPE_MISS , 5000);
-        //            }
-        //            return;
-        //
-        //        }
-        //        Log.d(TAG, "scrollItemLongCliclDouble: 长安 double状态");
-        //        //传递一个信息
-        //        moveBeforeFocusNowColor(i, j, Color.TRANSPARENT, Color.parseColor("#ffff0000"));
-        //
-        //        UserEvent userEvent = new UserEvent(0, "transfer_file");
-        //        userEvent.setFileName(mVideos.get(2 * mSelectedPostion.getPosition_i() + mSelectedPostion.getPosition_j()));
-        //        RxBus.getInstance()
-        //             .post(userEvent);
-        //        mSelectedPostion.setLongClick(true);
-        //        MainActivity.mIv_fenxiang.setVisibility(View.VISIBLE);
-        //        MainActivity.mTv_fenxiang_info.setVisibility(View.VISIBLE);
-        //        MainActivity.mTv_fenxiang_info.setText(mVideosName.get(2 * mSelectedPostion.getPosition_i() + mSelectedPostion.getPosition_j()) + "被选中");
-        //        //如果是横屏的状态 一开始是不存在那个进度条的
-        //        if(mRl_title_container.getVisibility() == View.GONE){
-        //            //让他出现
-        //            mRl_title_container.setVisibility(View.VISIBLE);
-        //
-        //        }
+        //点击长安 就变成了长安的状态
+        //退出长安的操作 有 ： 删除了文件 ，  没有选中一个文件 就点击去掉   或者退出键
+        //长安之后  记录之下 之前的被选中的i ,j
+        //更新状态
+        if(click_state == CLICK_STATE_LONG_CLICK){
+            return;
+        }
+
+        click_state = CLICK_STATE_LONG_CLICK;
+        Log.d(TAG, "scrollItemLongCliclDouble: 长安 double状态");
+
+        int[] hasLongClick = new int[2];
+        hasLongClick[0] = i;
+        hasLongClick[1] = j;
+        hasLongSelected.add(hasLongClick);
+        mBtn_cancle_del.setVisibility(View.VISIBLE);
+        mBtn_cancle_del.setText("删除");
+        //记录之前被选中的ij
+        mLongClickBeforeSlection.setPosition_i(mSelectedPostion.getPosition_i());
+        mLongClickBeforeSlection.setPosition_j(mSelectedPostion.getPosition_j() +1 );
+
+        //传递一个信息
+        moveBeforeFocusNowColor(i, j, Color.TRANSPARENT, Color.parseColor("#ffff0000"));
+
+
+
+        mSelectedPostion.setLongClick(true);
+
     }
 
     public void scrollItemLongCliclSingle(int i, int j) {

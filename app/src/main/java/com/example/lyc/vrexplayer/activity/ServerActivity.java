@@ -1,5 +1,6 @@
 package com.example.lyc.vrexplayer.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
@@ -14,7 +15,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,7 +55,7 @@ import rx.functions.Action1;
  *  @描述：    TODO
  */
 public class ServerActivity
-        extends AppCompatActivity
+        extends Activity
         implements View.OnClickListener
 {
 
@@ -107,7 +107,7 @@ public class ServerActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
-        getSupportActionBar().setTitle("服务器（接受数据）");
+        getActionBar().setTitle("服务器（接受数据）");
 
         initView();
         initFilter();

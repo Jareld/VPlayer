@@ -87,7 +87,8 @@ public class PicAndVidioActivity
     private ImageView    mIv_right;
     private Button       mBtn_left_wifi;
     private Button       mBtn_right_wifi;
-
+    public static boolean isPicFinished = false;
+    public static boolean isVideoFinished = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -482,6 +483,13 @@ public class PicAndVidioActivity
         if (mTv_pic.getSystemUiVisibility() != View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) {
             mTv_pic.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
+      if(isPicFinished){
+          isPicFinished = false;
+          mTv_pic.performClick();
+      }else if (isVideoFinished){
+          isVideoFinished = false;
+          mTv_video.performClick();
+      }
 
         super.onResume();
     }

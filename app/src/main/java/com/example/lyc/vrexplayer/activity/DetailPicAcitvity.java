@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -45,7 +46,6 @@ public class DetailPicAcitvity
         extends AppCompatActivity
         implements View.OnClickListener, SurfaceHolder.Callback
 {
-
 
     private static final String TAG               = "DetailPicAcitvity";
     private static final int    ANIMATION_END     = 10;
@@ -273,45 +273,51 @@ public class DetailPicAcitvity
                 Log.d("TAG", e2.getX() + " " + e2.getY());
 
                 return false;
+
+
             }
 
             @Override
             public boolean onDown(MotionEvent e) {
+
                 // TODO Auto-generated method stub
+
                 return false;
+
             }
         });
     }
 
     private void initDisplay() {
+        String radioVersion = Build.getRadioVersion();
+        int    sdkInt       = Build.VERSION.SDK_INT;
+        Log.d(TAG, "initDisplay: "+radioVersion + "::"+sdkInt);
+       mDefaultDisplay = getWindowManager().getDefaultDisplay();
+       Display.Mode[] supportedModes = mDefaultDisplay.getSupportedModes();
 
+       for(int i = 0 ; i < supportedModes.length ; i++){
+           int physicalWidth = supportedModes[i].getPhysicalWidth();
+           int physicalHeight = supportedModes[i].getPhysicalHeight();
+           Log.d(TAG, "initDisplay: "+"::" + physicalWidth + "::" + physicalHeight);
+          //  Toast.makeText(this, physicalHeight + "::" + physicalWidth,Toast.LENGTH_LONG).show();
+       }
+       mHas4K = false;
+       for (Display.Mode mode1 : supportedModes) {
+           if (mode1.getPhysicalHeight() == 3840 || mode1.getPhysicalWidth() == 3840) {
+               mHas4K = true;
+           }
+       }
 
-        mDefaultDisplay = getWindowManager().getDefaultDisplay();
-        Display.Mode[] supportedModes = mDefaultDisplay.getSupportedModes();
+       if (mHas4K) {
+           Window                     window                 = getWindow();
+           WindowManager.LayoutParams winParams              = window.getAttributes();
+           int                        preferredDisplayModeId = winParams.preferredDisplayModeId;
+           winParams.preferredDisplayModeId = 2;
+           winParams.preferredRefreshRate = 60.0f;
 
-        for(int i = 0 ; i < 2 ; i++){
-            int physicalWidth = supportedModes[i].getPhysicalWidth();
-            int physicalHeight = supportedModes[i].getPhysicalHeight();
-            Log.d(TAG, "initDisplay: "+"::" + physicalWidth + "::" + physicalHeight);
-
-        }
-        mHas4K = false;
-        for (Display.Mode mode1 : supportedModes) {
-            if (mode1.getPhysicalHeight() == 3840 || mode1.getPhysicalWidth() == 3840) {
-                mHas4K = true;
-            }
-        }
-
-        if (mHas4K) {
-            Window                     window                 = getWindow();
-            WindowManager.LayoutParams winParams              = window.getAttributes();
-            int                        preferredDisplayModeId = winParams.preferredDisplayModeId;
-            winParams.preferredDisplayModeId = 2;
-            winParams.preferredRefreshRate = 60.0f;
-
-            WindowManager.LayoutParams attributes = window.getAttributes();
-            window.setAttributes(winParams);
-        }
+           WindowManager.LayoutParams attributes = window.getAttributes();
+           window.setAttributes(winParams);
+       }
     }
 
     private void initEvent() {
@@ -1213,6 +1219,7 @@ public class DetailPicAcitvity
         int                    height       = getHeight(mPicUrl.get(mCurrentPostion));
         ViewGroup.LayoutParams layoutParams = mImgView1.getLayoutParams();
         Log.d(TAG, "surfaceCreated: ;:" + layoutParams.width + "::::" + layoutParams.height);
+     // Toast.makeText(this, height+"::", Toast.LENGTH_LONG).show();
         layoutParams.height = height;
         mImgView1.setLayoutParams(layoutParams);
     }
@@ -1223,7 +1230,7 @@ public class DetailPicAcitvity
         //If set to true, the decoder will return null (no bitmap), but the out…
         op.inJustDecodeBounds = true;
         Bitmap bmp = BitmapFactory.decodeFile(path, op); //获取尺寸信息
-        //获取比例大小
+        //获取图片的比例大小
         Log.d(TAG, "decodeBitmap: " + op.outWidth + "::" + op.outHeight + "::" + op.inDensity);
         WindowManager  manager    = this.getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -1233,21 +1240,30 @@ public class DetailPicAcitvity
                             .getWidth();
         int height1 = manager.getDefaultDisplay()
                              .getHeight();
+        //获取系统的比例大小
+        Log.d(TAG, "getHeight: "+width1 + "::" + height1);
         int   width  = outMetrics.widthPixels;
         int   height = outMetrics.heightPixels;
-        float width_f;
 
-        if (width > 1700 && width < 1920) {
+    //Toast.makeText(this , "++"+width + "::" + height,Toast.LENGTH_LONG).show();
+        float width_f;
+        if (width > 1700 && width <= 1920) {
             width_f = 1920;
-        } else {
+        } else if(width >= 2300 && width <= 3000){
+            width_f = 2560;
+        }else{
             width_f = width;
         }
+
         Log.d(TAG, "decodeBitmap: " + width + "::" + height + "::" + width1 + "::" + height1);
+
+        //图片的宽高比
         float ratio = (float) op.outWidth / (float) op.outHeight;
-        ;
 
-
+        //显示的高
         float dst_height = width_f / ratio;
+
+
         Log.d(TAG, "getHeight: " + dst_height);
         //1280.0
 
@@ -1258,6 +1274,7 @@ public class DetailPicAcitvity
     public byte[] bitmapResize(String path) {
 
         int    height1    = getHeight(path);
+
         long   start_time = System.currentTimeMillis();
         //应该放开
        // Bitmap bm         = getBitmapData(path);
@@ -1265,13 +1282,15 @@ public class DetailPicAcitvity
         // 获得图片的宽高  
         int width  = bm.getWidth();
         int height = bm.getHeight();
+
         // 设置想要的大小  
         int newHeight = height1;
 
-        int newWidth = 11;
+
         // 计算缩放比例  
         float scaleWidth  = ((float) 3840) / width;
         float scaleHeight = ((float) 1700) / height;
+
         // 取得想要缩放的matrix参数  
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
@@ -1281,6 +1300,8 @@ public class DetailPicAcitvity
         int   bitmapHight = biamt.getHeight();
         int[] pixels      = new int[bitmapWidth * bitmapHight];
         biamt.getPixels(pixels, 0, bitmapWidth, 0, 0, bitmapWidth, bitmapHight);
+
+        Log.d(TAG, "bitmapResize: "+bitmapWidth + bitmapHight);
         biamt.recycle();
         bm.recycle();
 //               byte[] newPixel = new byte[pixels.length * 4];

@@ -12,11 +12,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,12 +70,15 @@ public class WifiP2pRecActivity
     private static String            mAbsolutePath;
     private        String            mBeforeConnectName;
     private        FlikerProgressBar mRec_progress;
-    private static final int     RESTART_REC          = 1;
-    private static final int     NOT_FINISHED_RESTART = 2;
-    private static final int     MISS_PROGRESS        = 3;
+    private static final int RESTART_REC          = 1;
+    private static final int NOT_FINISHED_RESTART = 2;
+    private static final int MISS_PROGRESS        = 3;
+    private static final int FIRST_VIEW_MISS      = 4;
+    private static final int PROGRESS_BIANHUA     = 5;
+
     private int mPretransFileSize;
 
-    private              Handler mHandler             = new Handler() {
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -101,12 +106,37 @@ public class WifiP2pRecActivity
                 case MISS_PROGRESS:
                     mRec_progress.setVisibility(View.GONE);
                     break;
+                case FIRST_VIEW_MISS:
+                    mFirst_view.setVisibility(View.GONE);
+                    mSecond_view.setVisibility(View.VISIBLE);
+                    break;
+                case PROGRESS_BIANHUA:
+                   float newProgress = mProgress;
+                    Log.d(TAG, "startServerTask: "+newProgress + "::" + mBeforeProgress );
+                    if(newProgress == mBeforeProgress){
+                      //说明没动 已经挂掉了
+                      Log.d(TAG, "startServerTask: 已经挂掉了");
+                                  mServerTask.closeSocket();
+                                  mHandler.sendEmptyMessageDelayed(NOT_FINISHED_RESTART, 100 );
+                  }else{
+                      //说明在动作
+                  }
+
+
+                    break;
             }
 
             super.handleMessage(msg);
         }
     };
-    private boolean mIsFromServer;
+    private boolean      mIsFromServer;
+    private LinearLayout mSecond_view;
+    private LinearLayout mFirst_view;
+    private TextView     mTv_ava_space;
+    private Button       mBtn_ava_space_confirm;
+    private long mAvailableNum = 0;
+    private float mBeforeProgress;
+    private float mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,116 +203,163 @@ public class WifiP2pRecActivity
                                                      }
 
                                                      if (userEvent.getFileName() != null) {
-                                                         if (userEvent.getFiles_size() ==1) {
+                                                         if (userEvent.getFiles_size() == 1) {
                                                              mTv_rec_file.setText("传输文件的状态：接受文件完成:" + "文件为" + userEvent.getFileName());
                                                              preTransFileName = userEvent.getFileName();
-                                                         }else{
-                                                             mTv_rec_file.setText("传输文件的状态：接受文件完成，共接受"+userEvent.getFiles_size()+"个文件");
+                                                             mPretransFileSize = 1;
+                                                         } else {
+                                                             mTv_rec_file.setText(
+                                                                     "传输文件的状态：接受文件完成，共接受" + userEvent.getFiles_size() + "个文件");
                                                              preTransFileName = userEvent.getFileName();
                                                              mPretransFileSize = userEvent.getFiles_size();
                                                          }
-                                                         } else {
-                                                             mTv_rec_file.setText("传输文件的状态：接受文件完成。");
-                                                         }
-                                                         //重新执行一次等待的任务
-                                                         //
-                                                         //                                                     Log.d(TAG,
-                                                         //                                                           "run: 任务" + mServerTask.getStatus());
+                                                     } else {
+                                                         mTv_rec_file.setText("传输文件的状态：接受文件完成。");
+                                                     }
+                                                     //重新执行一次等待的任务
+                                                     //
+                                                     //                                                     Log.d(TAG,
+                                                     //                                                           "run: 任务" + mServerTask.getStatus());
 
-                                                         mHandler.sendEmptyMessageDelayed(
-                                                                 RESTART_REC,
-                                                                 30);
+                                                     mHandler.sendEmptyMessageDelayed(RESTART_REC,
+                                                                                      30);
 
-                                                         String filename = userEvent.getFileName();
+                                                     for (int i = 0; i < userEvent.getPathsArr()
+                                                                                  .size(); i++) {
                                                          sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                                                                                   Uri.fromFile(new File(
-                                                                                          Environment.getExternalStorageDirectory() + "/" + "Samson/Wifi-Tranfer/" + filename))));
-
+                                                                                          userEvent.getPathsArr()
+                                                                                                   .get(i)))));
 
                                                      }
-                                                 });
+
+
+                                                 }
+                                             });
 
 
                                              break;
-                                         case"serverReceiving":
+                                         case "serverReceiving":
 
-                                                 handler.post(new
+                                             handler.post(new
 
-                                                 Runnable() {
-                                                     @Override public void run () {
+                                                                  Runnable() {
+                                                                      @Override
+                                                                      public void run() {
 
-                                                         mTv_rec_file.setText("传输文件的状态：接受文件中");
+                                                                          mTv_rec_file.setText(
+                                                                                  "传输文件的状态：接受文件中");
 
-                                                     }
-                                                 });
+                                                                      }
+                                                                  });
 
 
                                              break;
-                                         case"waitingConnect":
+                                         case "waitingConnect":
 
-                                                 handler.post(new
+                                             handler.post(new
 
-                                                 Runnable() {
-                                                     @Override public void run () {
-                                                         if (mTv_rec_file.getVisibility() == View.GONE) {
-                                                             mTv_rec_file.setVisibility(View.VISIBLE);
-                                                         }
-                                                         if (mRec_progress.getVisibility() == View.VISIBLE) {
-                                                             mRec_progress.setVisibility(View.GONE);
-                                                         }
-                                                         if (preTransFileName != null) {
-                                                             mTv_rec_file.setText(
-                                                                     "传输文件的状态：等待传输中(上一次共接受" + mPretransFileSize + "个文件)");
-                                                         } else {
-                                                             mTv_rec_file.setText("传输文件的状态：等待传输中");
+                                                                  Runnable() {
+                                                                      @Override
+                                                                      public void run() {
+                                                                          if (mTv_rec_file.getVisibility() == View.GONE) {
+                                                                              mTv_rec_file.setVisibility(
+                                                                                      View.VISIBLE);
+                                                                          }
+                                                                          if (mRec_progress.getVisibility() == View.VISIBLE) {
+                                                                              mRec_progress.setVisibility(
+                                                                                      View.GONE);
+                                                                          }
+                                                                          if (preTransFileName != null || mPretransFileSize != 0) {
 
-                                                         }
-                                                     }
-                                                 });
+                                                                              if (mPretransFileSize == 1) {
+                                                                                  mTv_rec_file.setText(
+                                                                                          "传输文件的状态：等待传输中(上一次接受文件名为：" + preTransFileName + ")");
+                                                                              } else {
+                                                                                  mTv_rec_file.setText(
+                                                                                          "传输文件的状态：等待传输中(上一次共接受" + mPretransFileSize + "个文件)");
+
+                                                                              }
+                                                                          } else {
+                                                                              Log.d(TAG, "run: "+mPretransFileSize +"preTransFileName::" + preTransFileName);
+                                                                              mTv_rec_file.setText(
+                                                                                      "传输文件的状态：等待传输中");
+
+                                                                          }
+                                                                      }
+                                                                  });
                                              break;
-                                         case"doing":
-                                                 handler.post(new
+                                         case "doing":
+                                             handler.post(new
 
-                                                 Runnable() {
-                                                     @Override public void run () {
-                                                         if (mTv_rec_file.getVisibility() == View.VISIBLE) {
-                                                             mTv_rec_file.setVisibility(View.GONE);
-                                                         }
-                                                         if (mRec_progress.getVisibility() == View.GONE) {
-                                                             mRec_progress.setVisibility(View.VISIBLE);
-                                                         }
+                                                                  Runnable() {
+                                                                      @Override
+                                                                      public void run() {
+                                                                          if (mTv_rec_file.getVisibility() == View.VISIBLE) {
+                                                                              mTv_rec_file.setVisibility(
+                                                                                      View.GONE);
+                                                                          }
+                                                                          if (mRec_progress.getVisibility() == View.GONE) {
+                                                                              mRec_progress.setVisibility(
+                                                                                      View.VISIBLE);
+                                                                          }
 
-                                                         float progress = (userEvent.getProgress() * 100 / userEvent.getFileLengthMB());
-                                                         Log.d(TAG,
-                                                               "run: " + progress + "::" + userEvent.getProgress() + "::" + userEvent.getFileLengthMB());
-                                                         BigDecimal b = new BigDecimal(progress);
-                                                         progress = b.setScale(1,
-                                                                               BigDecimal.ROUND_HALF_UP)
-                                                                     .floatValue();
+                                                                          mProgress = (userEvent.getProgress() * 100 / userEvent.getFileLengthMB());
+                                                                          Log.d(TAG,
+                                                                                "run: " + mProgress + "::" + userEvent.getProgress() + "::" + userEvent.getFileLengthMB());
+                                                                          BigDecimal b = new BigDecimal(
+                                                                                  mProgress);
+                                                                          mProgress = b.setScale(1,
+                                                                                                 BigDecimal.ROUND_HALF_UP)
+                                                                                       .floatValue();
 
-                                                         mRec_progress.setProgress(progress);
+                                                                          mRec_progress.setProgress(
+                                                                                  mProgress);
 
-                                                     }
-                                                 });
-                                         case"WIFI_P2P_PEER_CHANGE":
+                                                                      }
+                                                                  });
+                                         case "WIFI_P2P_PEER_CHANGE":
 
 
-                                                 break;
-                                         case"connect_fail":
-                                                 Toast.makeText(
+                                             break;
+                                         case "connect_fail":
+                                             Toast.makeText(
 
-                                                 getApplicationContext(),
-                                                            "启动文件传输失败 ，请重新发送文件",
-                                                 Toast.LENGTH_SHORT)
-                                                         .
+                                                     getApplicationContext(),
+                                                     "启动文件传输失败 ，请重新发送文件",
+                                                     Toast.LENGTH_SHORT)
+                                                  .
 
-                                                 show();
+                                                          show();
                                              break;
 
-                                             }
                                      }
-                                 });
-                             }
+                                 }
+                             });
+
+
+        if (mAvailableNum != 0) {
+            float available_num = ((float) mAvailableNum) / 1024 / 1024 / 1024;
+            Log.d(TAG, "initRxBus: " + available_num);
+            float biaozhunNum = 1.2f;
+            if (available_num < biaozhunNum) {
+                Log.d(TAG, "initRxBus: 进入到小鱼的里面来了");
+                mFirst_view.setVisibility(View.VISIBLE);
+                mTv_ava_space.setText("可用空间已经不足1.0G,请注意发送文件的大小");
+                mHandler.sendEmptyMessageDelayed(FIRST_VIEW_MISS, 5000);
+            } else {
+                mFirst_view.setVisibility(View.GONE);
+                mSecond_view.setVisibility(View.VISIBLE);
+            }
+
+
+        } else {
+            mFirst_view.setVisibility(View.GONE);
+            mSecond_view.setVisibility(View.VISIBLE);
+        }
+
+
+    }
 
     private void initWifiP2p() {
         mFilter = new IntentFilter();
@@ -420,9 +497,9 @@ public class WifiP2pRecActivity
         } else if (!mServerTask.getIsFinished()) {
             //重新连接服务器但是还没有完成，那么是不是要  重新启动一下这个服务器
             Log.d(TAG, "startServerTask: 重连服务器 但是还没有完成，重新关闭一下server");
-            mServerTask.closeSocket();
-            mHandler.sendEmptyMessageDelayed(NOT_FINISHED_RESTART, 100);
-
+            Log.d(TAG, "startServerTask: " + mRec_progress.getProgress());
+            mBeforeProgress = mProgress;
+            mHandler.sendEmptyMessageDelayed(PROGRESS_BIANHUA, 200);
         } else {
             Log.d(TAG, "startServerTask: 其他情况");
         }
@@ -435,6 +512,10 @@ public class WifiP2pRecActivity
         mTv_rec_file = (TextView) findViewById(R.id.file_rec);
         mRec_progress = (FlikerProgressBar) findViewById(R.id.rec_file_progress);
         mHandler.sendEmptyMessageDelayed(MISS_PROGRESS, 50);
+        mSecond_view = (LinearLayout) findViewById(R.id.second_view);
+        mFirst_view = (LinearLayout) findViewById(R.id.first_view);
+        mTv_ava_space = (TextView) findViewById(R.id.available_space);
+        mBtn_ava_space_confirm = (Button) findViewById(R.id.available_space_confirm);
     }
 
     private void initData() {
@@ -488,13 +569,32 @@ public class WifiP2pRecActivity
                 //不是星期一
                 mAbsolutePath = path + newString + "/";
             }
-
-
         }
-
-
         //随便添加
         Log.d(TAG, "initData: 最终的路径" + mAbsolutePath);
+
+        // 获得手机内部存储控件的状态
+        File dataFileDir = Environment.getDataDirectory();
+        getMemoryInfo(dataFileDir);
+
+
+    }
+
+    private void getMemoryInfo(File path) {
+        // 获得一个磁盘状态对象
+        StatFs stat = new StatFs(path.getPath());
+
+        long blockSize = stat.getBlockSize();   // 获得一个扇区的大小
+
+        long totalBlocks = stat.getBlockCount();    // 获得扇区的总数
+
+        long availableBlocks = stat.getAvailableBlocks();   // 获得可用的扇区数量
+
+        Log.d(TAG, "getMemoryInfo: " + availableBlocks + "::" + blockSize);
+
+        //可用空间
+        mAvailableNum = availableBlocks * blockSize;
+
 
     }
 
@@ -533,6 +633,7 @@ public class WifiP2pRecActivity
 
     private void initEvent() {
         mBtn_reset.setOnClickListener(this);
+        mBtn_ava_space_confirm.setOnClickListener(this);
     }
 
     @Override
@@ -594,6 +695,14 @@ public class WifiP2pRecActivity
                 if (mServerTask != null) {
                     Log.d(TAG, "onClick: servertask status= " + mServerTask.getStatus());
 
+                }
+
+                break;
+            case R.id.available_space_confirm:
+                if (mHandler.hasMessages(FIRST_VIEW_MISS)) {
+                    mHandler.removeMessages(FIRST_VIEW_MISS);
+                    mFirst_view.setVisibility(View.GONE);
+                    mSecond_view.setVisibility(View.VISIBLE);
                 }
 
                 break;

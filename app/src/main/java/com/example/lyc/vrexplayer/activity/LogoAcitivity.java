@@ -77,7 +77,7 @@ public class LogoAcitivity
                     @Override
                     public void run() {
                         // TODO onComplete
-                        mHandler.sendEmptyMessageDelayed(STARTACTIVITY ,1000);
+                        mHandler.sendEmptyMessageDelayed(STARTACTIVITY ,1500);
 
                     }
                 });

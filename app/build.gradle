@@ -30,6 +30,9 @@ android {
             path "src/main/cpp/CMakeLists.txt"
         }
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
 
 dependencies {

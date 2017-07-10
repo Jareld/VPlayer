@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -37,7 +39,7 @@ import java.util.Comparator;
 
 public class PicAcitivity
         extends AppCompatActivity
-        implements ObservableScrollView.ScrollViewKeydownListener
+        implements ObservableScrollView.ScrollViewKeydownListener, View.OnClickListener
 {
     public static final  int    ORIENTATION_PROTRAIT  = 1;
     public static final  int    ORIENTATION_LANDSCAPE = 2;
@@ -53,6 +55,13 @@ public class PicAcitivity
     private View      mLayout;
     private ImageView mIv_left;
     private ImageView mIv_right;
+    private static final int CLICK_STATE_LONG_CLICK = 3;
+    private static final int CLICK_STATE_SHORT_CLICK =4;
+    private int click_state = CLICK_STATE_SHORT_CLICK;
+    private SelectedPosition mLongClickBeforeSlection = new SelectedPosition();
+    private ArrayList<int []> hasLongSelected = new ArrayList<>();
+    private Button mBtn_cancle_del;
+    private boolean isResetLongClick = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +103,7 @@ public class PicAcitivity
     private void initView() {
         mObservableScrollview = (ObservableScrollView) findViewById(R.id.scroll_view_pic);
         mLlContainer = (LinearLayout) findViewById(R.id.ll_scrollview_container_pic);
-
+        mBtn_cancle_del = (Button) findViewById(R.id.btn_cancle_del);
         mIv_left = (ImageView) findViewById(R.id.iv_left);
         mIv_right = (ImageView) findViewById(R.id.iv_right);
     }
@@ -149,6 +158,7 @@ public class PicAcitivity
         }
 
 
+
         mInitOrientation = getResources().getConfiguration().orientation;
 
         if (mInitOrientation == ORIENTATION_PROTRAIT) {
@@ -163,9 +173,9 @@ public class PicAcitivity
         mObservableScrollview.setOnScrollViewKeydownListener(this);
         mObservableScrollview.setOrientation(mInitOrientation);
 
-        if (!mSelectedPostion.getIsFirst()) {
+        if (!mSelectedPostion.getIsFirst() && !isResetLongClick) {
             //那么久要进行某一个 方框的xuanze
-            if (mInitOrientation == ORIENTATION_LANDSCAPE) {
+            if (mInitOrientation == ORIENTATION_LANDSCAPE ) {
                 moveSetImageViewBG(mSelectedPostion.getPosition_i(),
                                    mSelectedPostion.getPosition_j(),
                                    Color.parseColor("#ffffff00"));
@@ -183,9 +193,131 @@ public class PicAcitivity
     }
 
     private void initEvent() {
+mBtn_cancle_del.setOnClickListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(click_state == CLICK_STATE_LONG_CLICK){
+            isResetLongClick = true;
+
+
+            //无论怎么样都要重置
+            //重新更新数据
+            initData();
+            //重置一些状态
+
+
+            //被选中的长吉 要清空
+            hasLongSelected.clear();
+            //不管是不是第一次点击要清空
+            mIsSelctedClick = false;
+            //点击的状态要清空
+            click_state = CLICK_STATE_SHORT_CLICK;
+
+            mBtn_cancle_del.setVisibility(View.GONE);
+
+            mSelectedPostion.setLongClick(false);
+
+            moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                               mSelectedPostion.getPosition_j(),
+                               Color.parseColor("#ffffff00"));
+            moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                               mSelectedPostion.getPosition_j() + 2,
+                               Color.parseColor("#ffffff00"));
+
+            isResetLongClick = false;
+
+return;
+        }
+
+        super.onBackPressed();
 
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_cancle_del:
+
+
+
+
+                isResetLongClick = true;
+
+                if(hasLongSelected!=null && hasLongSelected.size()!=0){
+                    //进行删除工作
+                    for(int i = 0 ; i < hasLongSelected.size() ; i ++){
+
+                        Log.d(TAG, "onClick: "+hasLongSelected.get(i)[0] + "-"+hasLongSelected.get(i)[1] +"::"+ mPics.get(2 * hasLongSelected.get(i)[0] + hasLongSelected.get(i)[1]-1));
+
+                        File file = new File(mPics.get(2 * hasLongSelected.get(i)[0] + hasLongSelected.get(i)[1]-1));
+                        if(file!=null && file.exists()){
+                            file.delete();
+
+                        }
+                    }
+
+                }else{
+                    //进行取消工作
+
+
+                }
+        //无论怎么样都要重置
+                //重新更新数据
+                initData();
+                //重置一些状态
+                if(mPics.size() == 0){
+                    Log.d(TAG, "initData:111 "+mPics.size());
+                   FilesActivity.isFilesPicFinished = true;
+                    finish();
+
+                }else {
+
+                    //被选中的长吉 要清空
+                    hasLongSelected.clear();
+                    //不管是不是第一次点击要清空
+                    mIsSelctedClick = false;
+                    //点击的状态要清空
+                    click_state = CLICK_STATE_SHORT_CLICK;
+
+                    mBtn_cancle_del.setVisibility(View.GONE);
+
+                    mSelectedPostion.setLongClick(false);
+
+                    moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                                       mSelectedPostion.getPosition_j(),
+                                       Color.parseColor("#ffffff00"));
+                    moveSetImageViewBG(mSelectedPostion.getPosition_i(),
+                                       mSelectedPostion.getPosition_j() + 2,
+                                       Color.parseColor("#ffffff00"));
+
+                    isResetLongClick = false;
+                }
+                break;
+            default:
+                break;
+        }
+
+
+    }
+    private String getPicAndVideoPath() {
+        //看有没有 外部卡
+        if (Environment.getExternalStorageDirectory()
+                       .exists())
+        {
+            //如果有外部的卡
+            return Environment.getExternalStorageDirectory()
+                              .getAbsolutePath();
+        } else {
+            //没有
+            return Environment.getDataDirectory()
+                              .getAbsolutePath();
+        }
+
+
+    }
     private class FileComparator
             implements Comparator<File>
     {
@@ -630,7 +762,6 @@ public class PicAcitivity
                 @Override
                 public boolean onLongClick(View view) {
                     scrollItemLongCliclDouble(final_double_i, 2);
-
                     return true;
                 }
             });
@@ -787,7 +918,10 @@ public class PicAcitivity
 
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                LogUtils.prinfLog("输出的selected" + "::i = " + mSelectedPostion.getPosition_i() + "::j = " + mSelectedPostion.getPosition_j());
+
+
+
+                LogUtils.prinfLog("size = " + mPics.size() + "输出的selected" + "::i = " + mSelectedPostion.getPosition_i() + "::j = " + mSelectedPostion.getPosition_j());
 
                 Intent intent = new Intent(mContext, DetailPicAcitvity.class);
                 intent.putStringArrayListExtra("PicUrl", mPics);
@@ -862,9 +996,35 @@ public class PicAcitivity
     }
 
     public void scrollItemCliclDouble(int i, int j) {
-        if (mSelectedPostion.getIsLongClick()) {
+        if (mSelectedPostion.getIsLongClick() || click_state == CLICK_STATE_LONG_CLICK) {
             //如果处于长安状态   那么
             //单机时间就不要处理
+            Log.d(TAG, "scrollItemCliclDouble: getIsLongClick");
+
+            if(hasLongSelected!=null && hasLongSelected.size() != 0){
+                for(int num = 0 ; num < hasLongSelected.size() ; num++){
+                    int[] ints = hasLongSelected.get(num);
+                    if(ints[0] == i && ints[1] == j){
+                        moveFocusNowColor(i , j ,Color.TRANSPARENT);
+                        hasLongSelected.remove(num);
+                        if(hasLongSelected.size() == 0){
+                            mBtn_cancle_del.setText("取消");
+                        }
+                    return;
+                    }
+                }
+            }
+
+
+            int[] hasLongClick = new int[2];
+            hasLongClick[0] = i ;
+            hasLongClick[1] = j;
+            hasLongSelected.add(hasLongClick);
+            moveFocusNowColor(i , j ,Color.parseColor("#ffff0000"));
+            if(hasLongSelected.size() != 0){
+                mBtn_cancle_del.setText("删除");
+            }
+
             return;
         }
         moveBeforeFocusNowColor(i, j, Color.TRANSPARENT, Color.parseColor("#ffffff00"));
@@ -881,12 +1041,26 @@ public class PicAcitivity
         }
 
     }
+
+    private void moveFocusNowColor(int i, int j , int color) {
+
+        moveSetImageViewBG(i,
+                           j-1,
+                           color);
+        moveSetImageViewBG(i,
+                           j-1 + 2,
+                          color);
+
+    }
+
     private boolean mIsSelctedClick = false;
     public void moveBeforeFocusNowColor(int i, int j, int transparent, int color) {
 
-        if (i == mSelectedPostion.getPosition_i() && (j - 1) == mSelectedPostion.getPosition_j()) {
+
+        if (i == mSelectedPostion.getPosition_i() && (j - 1) == mSelectedPostion.getPosition_j() && click_state != CLICK_STATE_LONG_CLICK) {
             Log.d(TAG, "moveBeforeFocusNowColor: 目前被点击的  和 目前被选中的一样");
             //目前被点击的  和选中的一样  那么 仅仅只要跳转界面。
+
             mIsSelctedClick = true;
         }else{
             Log.d(TAG, "moveBeforeFocusNowColor: 目前被点击的  和目前选中的不一样");
@@ -921,31 +1095,45 @@ public class PicAcitivity
             }
             mIsSelctedClick = false;
         }
-
-
-
         //把之前的变成 无边框1
         //把选中的变成 有边框
-
-
-
     }
 
     public void scrollItemLongCliclDouble(int i, int j) {
+        //点击长安 就变成了长安的状态
+        //退出长安的操作 有 ： 删除了文件 ，  没有选中一个文件 就点击去掉   或者退出键
+        //长安之后  记录之下 之前的被选中的i ,j
+        //更新状态
+        if(click_state == CLICK_STATE_LONG_CLICK){
+            return;
+        }
 
+        click_state = CLICK_STATE_LONG_CLICK;
         Log.d(TAG, "scrollItemLongCliclDouble: 长安 double状态");
-        //传递一个信息
-        moveBeforeFocusNowColor(i, j, Color.TRANSPARENT, Color.parseColor("#ffff0000"));
 
-        UserEvent userEvent = new UserEvent(0, "transfer_file");
-        userEvent.setFileName(mPics.get(2 * mSelectedPostion.getPosition_i() + mSelectedPostion.getPosition_j()));
-        RxBus.getInstance()
-             .post(userEvent);
+        int[] hasLongClick = new int[2];
+        hasLongClick[0] = i;
+        hasLongClick[1] = j;
+        hasLongSelected.add(hasLongClick);
+        mBtn_cancle_del.setVisibility(View.VISIBLE);
+        mBtn_cancle_del.setText("删除");
+        //记录之前被选中的ij
+        mLongClickBeforeSlection.setPosition_i(mSelectedPostion.getPosition_i());
+        mLongClickBeforeSlection.setPosition_j(mSelectedPostion.getPosition_j() +1 );
+
+        //传递一个信息
+     moveBeforeFocusNowColor(i, j, Color.TRANSPARENT, Color.parseColor("#ffff0000"));
+
+
+
         mSelectedPostion.setLongClick(true);
+
+
 
         //如果是横屏的状态 一开始是不存在那个进度条的
 
     }
+
 
     private void moveFocusMedia(String str, int position_i, boolean isDownRight) {
         if (str.equals("move_i")) {

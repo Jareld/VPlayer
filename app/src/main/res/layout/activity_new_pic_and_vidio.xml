@@ -49,19 +49,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#00ffffff"
-                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
-                <Button android:layout_width="50dp" android:layout_height="50dp"
+                <Button android:layout_width="40dp" android:layout_height="40dp"
                  android:background="@mipmap/test_button_1"
                         android:id="@+id/wifi_p2p_left"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         android:selectAllOnFocus="false"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginRight="70dp"
                         android:layout_gravity="end"
                         android:text="wifi"
                 />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="Samson VR Player"
+                          android:text="Vrecx Player"
                           android:textSize="17sp"
                           android:id="@+id/tv_vr_left"
                           android:textColor="#80ffffff"
@@ -69,27 +71,27 @@
                 <Button
                     android:background="@mipmap/test_button_1"
                     android:id="@+id/new_pic_video_state_pic"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_gravity="center"
 
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="picture"
-                    android:textSize="15sp"/>
+                    android:textSize="12sp"/>
 
                 <Button
                     android:id="@+id/new_pic_video_state_video"
                     android:background="@mipmap/test_button_1"
 
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_gravity="center"
 
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="  video  "
-                    android:textSize="15sp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -115,44 +117,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#00ffffff"
-                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-                <Button android:layout_width="50dp" android:layout_height="50dp"
+                <Button android:layout_width="40dp" android:layout_height="40dp"
                         android:background="@mipmap/test_button_1"
                         android:selectAllOnFocus="false"
                         android:id="@+id/wifi_p2p_right"
                         android:layout_gravity="end"
-                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginRight="70dp"
                         android:text="wifi"
-                        android:textSize="15sp"  />
+                        android:textSize="13sp"  />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="Samson VR Player"
-                        android:textSize="17sp"
+                          android:text="Vrecx Player"
+                          android:textSize="17sp"
                           android:textColor="#80ffffff"
                           android:id="@+id/tv_vr_right"
                 />
                 <Button
                     android:id="@+id/new_pic_video_state_pic2"
                     android:background="@mipmap/test_button_1"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="picture"
-                    android:textSize="15sp"/>
+                    android:textSize="12sp"/>
 
                 <Button
                     android:id="@+id/new_pic_video_state_video2"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:background="@mipmap/test_button_1"
                     android:layout_gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="  video  "
-                    android:textSize="15sp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
