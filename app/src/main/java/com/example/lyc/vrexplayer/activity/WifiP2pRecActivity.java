@@ -344,14 +344,14 @@ public class WifiP2pRecActivity
 
                                              break;
                                          case "connect_fail":
-                                             Toast.makeText(
-
-                                                     getApplicationContext(),
-                                                     "启动文件传输失败 ，请重新发送文件",
-                                                     Toast.LENGTH_SHORT)
-                                                  .
-
-                                                          show();
+//                                             Toast.makeText( getApplicationContext(),
+//                                                             "启动文件传输失败 ，请重新发送文件",
+//                                                             Toast.LENGTH_SHORT)
+//                                                  .show();
+                                             Toast.makeText( getApplicationContext(),
+                                                             "Start file transfer failed, please resend the file",
+                                                             Toast.LENGTH_SHORT)
+                                                  .show();
                                              break;
 
                                      }
@@ -366,7 +366,9 @@ public class WifiP2pRecActivity
             if (available_num < biaozhunNum) {
                 Log.d(TAG, "initRxBus: 进入到小鱼的里面来了");
                 mFirst_view.setVisibility(View.VISIBLE);
-                mTv_ava_space.setText("可用空间已经不足1.0G,请注意发送文件的大小");
+                //中文修改
+              //  mTv_ava_space.setText("可用空间已经不足1.0G,请注意发送文件的大小");
+                mTv_ava_space.setText("The available space is less than 1.0G, please note the size of the file sent");
                 mHandler.sendEmptyMessageDelayed(FIRST_VIEW_MISS, 5000);
             } else {
                 mFirst_view.setVisibility(View.GONE);
@@ -418,7 +420,9 @@ public class WifiP2pRecActivity
                                 //中文修改
                                 beforeConnectDevice = wifiP2pDevice.deviceName;
                                 //说明这个连接到了：
-                                mTv_waiting_for_server.setText("连接成功------" + "已连接至设备：" + wifiP2pDevice.deviceName);
+                                //mTv_waiting_for_server.setText("连接成功------" + "已经连接到设备：" + wifiP2pDevice.deviceName);
+
+                                mTv_waiting_for_server.setText("Connect success------" + "The connected device：" + wifiP2pDevice.deviceName);
                                 startServerTask();
                                 return;
                             }
@@ -429,7 +433,9 @@ public class WifiP2pRecActivity
                             mRec_progress.setVisibility(View.GONE);
                         } else if (mTv_rec_file.getVisibility() == View.GONE) {
                             mTv_rec_file.setVisibility(View.VISIBLE);
-                            mTv_rec_file.setText("等待接受文件");
+                            mTv_rec_file.setText("Waiting for recive files");
+//                            mTv_rec_file.setText("等待接受文件");
+//中文修改
                         }
                    //     mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）:");
                         mTv_waiting_for_server.setText("The receiving  is ready (waiting for the connecting");
