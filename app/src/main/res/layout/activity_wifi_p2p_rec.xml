@@ -29,7 +29,7 @@
             <!--中文修改 状态-->
             <TextView android:id="@+id/wating_device_connect" android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Creating Receiving......"
+                      android:text="创建接收端中......"
                       android:textColor="#ff0000"
                       android:textSize="15sp"
             />
