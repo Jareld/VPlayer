@@ -25,7 +25,7 @@
             <Button android:id="@+id/wating_device_connect_btn" android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@mipmap/test_button_1"
-                    android:text="Status："/>
+                    android:text="状态："/>
             <!--中文修改 状态-->
             <TextView android:id="@+id/wating_device_connect" android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:layout_height="70dp"
                 android:layout_marginTop="10dp"
                 android:background="@mipmap/test_button_1"
-                android:text="Reset"/>
+                android:text="重置"/>
         <!--中文修改 重置-->
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
@@ -49,11 +49,11 @@
             <Button android:id="@+id/file_rec__btn" android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@mipmap/test_button_1"
-                    android:text="File："/>
+                    android:text="文件："/>
             <!--中文修改 File-->
             <TextView android:id="@+id/file_rec" android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Wating for Reciving File？"
+                      android:text="等待接受文件？"
                       android:textColor="#ff0000"
                       android:textSize="15sp"
             />

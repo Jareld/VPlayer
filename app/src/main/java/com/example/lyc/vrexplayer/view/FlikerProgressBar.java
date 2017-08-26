@@ -419,17 +419,17 @@ public class FlikerProgressBar
         if (!isFinish) {
             if (!isStop) {
                 //中文修改
-//                text = "下载中" + progress + "%";
-                text = "Downloading" + progress + "%";
+                text = "下载中" + progress + "%";
+                //               text = "Downloading" + progress + "%";
             } else {
                 //中文修改
-//                text = "继续";
-                text = "Continue";
+               text = "继续";
+                //                text = "Continue";
             }
         } else {
             //中文修改
-//            text = "下载完成";
-            text = "Downloaded";
+           text = "下载完成";
+            //           text = "Downloaded";
         }
 
         return text;
