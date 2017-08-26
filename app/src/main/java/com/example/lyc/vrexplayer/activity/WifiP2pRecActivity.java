@@ -182,8 +182,12 @@ public class WifiP2pRecActivity
                                              handler.post(new Runnable() {
                                                  @Override
                                                  public void run() {
-                                                     mTv_waiting_for_server.setText(
-                                                             "接收端已经准备好（等待发送端连接）:");
+                                                     //中文修改
+
+                                                     //  mTv_waiting_for_server.setText(
+                                                    //         "接收端已经准备好（等待发送端连接）:");
+                                                     mTv_waiting_for_server.setText("The receiving  is ready (waiting for the connecting");
+
                                                  }
                                              });
                                              break;
@@ -204,17 +208,27 @@ public class WifiP2pRecActivity
 
                                                      if (userEvent.getFileName() != null) {
                                                          if (userEvent.getFiles_size() == 1) {
-                                                             mTv_rec_file.setText("传输文件的状态：接受文件完成:" + "文件为" + userEvent.getFileName());
+                                                             //中文修改
+
+                                                             //  mTv_rec_file.setText("传输文件的状态：接受文件完成:" + "文件为" + userEvent.getFileName());
+                                                             mTv_rec_file.setText("Status of the transport file: accept the file completion:" + "File:" + userEvent.getFileName());
+
                                                              preTransFileName = userEvent.getFileName();
                                                              mPretransFileSize = 1;
                                                          } else {
-                                                             mTv_rec_file.setText(
-                                                                     "传输文件的状态：接受文件完成，共接受" + userEvent.getFiles_size() + "个文件");
+                                                             //中文修改
+
+                                                             //  mTv_rec_file.setText( "传输文件的状态：接受文件完成，共接受" + userEvent.getFiles_size() + "个文件");
+                                                              mTv_rec_file.setText( "Status of the transmission file: accept the file and accept it" + userEvent.getFiles_size() + "Files");
                                                              preTransFileName = userEvent.getFileName();
                                                              mPretransFileSize = userEvent.getFiles_size();
                                                          }
                                                      } else {
-                                                         mTv_rec_file.setText("传输文件的状态：接受文件完成。");
+                                                         //中文修改
+
+                                                         //   mTv_rec_file.setText("传输文件的状态：接受文件完成。");
+                                                         mTv_rec_file.setText("Status of the transport file: accept the file completion。");
+
                                                      }
                                                      //重新执行一次等待的任务
                                                      //
@@ -246,12 +260,15 @@ public class WifiP2pRecActivity
                                                                   Runnable() {
                                                                       @Override
                                                                       public void run() {
-
+                                                                          //中文修改
+                                                                      //    mTv_rec_file.setText(
+                                                                      //            "传输文件的状态：接受文件中");
                                                                           mTv_rec_file.setText(
-                                                                                  "传输文件的状态：接受文件中");
+                                                                                  "Status of the transport file：Receiving");
 
                                                                       }
                                                                   });
+
 
 
                                              break;
@@ -273,18 +290,22 @@ public class WifiP2pRecActivity
                                                                           if (preTransFileName != null || mPretransFileSize != 0) {
 
                                                                               if (mPretransFileSize == 1) {
+//                                                                                  mTv_rec_file.setText(
+//                                                                                          "Status of the transport file：等待传输中(上一次接受文件名为：" + preTransFileName + ")");
                                                                                   mTv_rec_file.setText(
-                                                                                          "传输文件的状态：等待传输中(上一次接受文件名为：" + preTransFileName + ")");
+                                                                                          "Status of the transport file：Waiting For Receiving");
                                                                               } else {
+//                                                                                  mTv_rec_file.setText(
+//                                                                                          "Status of the transport file：等待传输中(上一次共接受" + mPretransFileSize + "个文件)");
                                                                                   mTv_rec_file.setText(
-                                                                                          "传输文件的状态：等待传输中(上一次共接受" + mPretransFileSize + "个文件)");
-
+                                                                                          "Status of the transport file：Waiting For Receiving");
                                                                               }
                                                                           } else {
                                                                               Log.d(TAG, "run: "+mPretransFileSize +"preTransFileName::" + preTransFileName);
+//                                                                              mTv_rec_file.setText(
+//                                                                                      "传输文件的状态：等待传输中");
                                                                               mTv_rec_file.setText(
-                                                                                      "传输文件的状态：等待传输中");
-
+                                                                                      "Status of the transport file：Waiting For Receiving");
                                                                           }
                                                                       }
                                                                   });
@@ -385,12 +406,16 @@ public class WifiP2pRecActivity
                 if (mIsFromServer) {
                     Log.d(TAG, "onPeersAvailable: 步骤  进入到服务器进入的搜索");
                     if (mDeviceList == null) {
-                        mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）");
+                        //mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）");
+                        mTv_waiting_for_server.setText("The receiving  is ready (waiting for the connecting");
+
                     } else {
 
                         for (WifiP2pDevice wifiP2pDevice : mDeviceList) {
                             Log.d("Jareld ", "onConnectionInfoAvailable: " + wifiP2pDevice.status);
                             if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
+
+                                //中文修改
                                 beforeConnectDevice = wifiP2pDevice.deviceName;
                                 //说明这个连接到了：
                                 mTv_waiting_for_server.setText("连接成功------" + "已连接至设备：" + wifiP2pDevice.deviceName);
@@ -406,7 +431,9 @@ public class WifiP2pRecActivity
                             mTv_rec_file.setVisibility(View.VISIBLE);
                             mTv_rec_file.setText("等待接受文件");
                         }
-                        mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）:");
+                   //     mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）:");
+                        mTv_waiting_for_server.setText("The receiving  is ready (waiting for the connecting");
+
                     }
                     mIsFromServer = false;
                 }
@@ -440,21 +467,28 @@ public class WifiP2pRecActivity
                     });
 
                     if (mDeviceList == null) {
-                        mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）");
+                        //中文修改
+
+                        //  mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）");
+                        mTv_waiting_for_server.setText("The receiving  is ready (waiting for the connecting");
+
                     } else {
                         for (WifiP2pDevice wifiP2pDevice : mDeviceList) {
                             Log.d("Jareld ", "onConnectionInfoAvailable: " + wifiP2pDevice.status);
                             if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
                                 beforeConnectDevice = wifiP2pDevice.deviceName;
                                 //说明这个连接到了：
-                                mTv_waiting_for_server.setText("连接成功------" + "已连接至设备：" + wifiP2pDevice.deviceName);
+                               // mTv_waiting_for_server.setText("连接成功------" + "已连接至设备：" + wifiP2pDevice.deviceName);
+                                mTv_waiting_for_server.setText("The connection is successful------" + "Already connected to the device：" + wifiP2pDevice.deviceName);
 
                                 startServerTask();
                                 return;
                             }
                         }
                         //到了这里说明  一个也没有连接上
-                        mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）:");
+                       // mTv_waiting_for_server.setText("接收端已经准备好（等待发送端连接）:");
+                        mTv_waiting_for_server.setText("The receiving  is ready (waiting for the connecting");
+
                     }
 
                 } else if (info.groupFormed) {
@@ -471,7 +505,28 @@ public class WifiP2pRecActivity
                                                     this,
                                                     mPeerListListener,
                                                     mConnectionInfoListener);
+        mManager.cancelConnect(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
 
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
         //创建服务器
         mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
             @Override

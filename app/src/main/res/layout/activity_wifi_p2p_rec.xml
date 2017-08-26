@@ -25,20 +25,23 @@
             <Button android:id="@+id/wating_device_connect_btn" android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@mipmap/test_button_1"
-                    android:text="状态："/>
+                    android:text="Status："/>
+            <!--中文修改 状态-->
             <TextView android:id="@+id/wating_device_connect" android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="创建接收端中......"
+                      android:text="Creating Receiving......"
                       android:textColor="#ff0000"
                       android:textSize="15sp"
             />
+            <!--中文修改 创建接收端中..-->
         </LinearLayout>
 
         <Button android:id="@+id/reset_status_btn" android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginTop="10dp"
                 android:background="@mipmap/test_button_1"
-                android:text="重置"/>
+                android:text="Reset"/>
+        <!--中文修改 重置-->
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:layout_gravity="center_vertical"
@@ -46,13 +49,15 @@
             <Button android:id="@+id/file_rec__btn" android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@mipmap/test_button_1"
-                    android:text="文件："/>
+                    android:text="File："/>
+            <!--中文修改 File-->
             <TextView android:id="@+id/file_rec" android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="等待接受文件？"
+                      android:text="Wating for Reciving File？"
                       android:textColor="#ff0000"
                       android:textSize="15sp"
             />
+            <!--中文修改 等待接受文件-->
             <com.example.lyc.vrexplayer.view.FlikerProgressBar android:id="@+id/rec_file_progress"
                                                                android:layout_width="400dp"
                                                                android:layout_marginLeft="10dp"
